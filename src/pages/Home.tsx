@@ -2,9 +2,7 @@ import { useState } from 'react';
 import Header from '@/components/Header';
 import ProjectCard from '@/components/ProjectCard';
 import FeedFilters from '@/components/FeedFilters';
-import ParticleBackground from '@/components/ParticleBackground';
 import AnimatedBackground from '@/components/AnimatedBackground';
-import heroBackground from '@/assets/hero-background.jpg';
 
 // Mock data
 const mockProjects = [
@@ -72,11 +70,26 @@ const Home = () => {
   const [activeFilter, setActiveFilter] = useState('trending');
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background scanline-overlay">
       <AnimatedBackground />
-      <ParticleBackground />
       <Header />
       
+      <main className="container mx-auto px-4 py-8 space-y-8">
+        {/* Hero Section */}
+        <section className="retro-panel p-8 text-center">
+          <h1 className="text-3xl md:text-5xl font-display text-primary tracking-widest">
+            RESONA
+          </h1>
+          <p className="mt-4 text-base md:text-lg text-muted-foreground">
+            A NETWORK FOR OPEN SCIENCE & CREATION
+          </p>
+          <p className="mt-2 text-sm md:text-base text-muted-foreground">
+            PUBLISH EXPERIMENTS. COLLABORATE. BUILD THE FUTURE.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
+            <a href="https://github.com/Resonant-Intelligence-Lab" target="_blank" rel="noopener noreferrer">
+              <button className="retro-button">
+                JOIN_THE_BETA
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div 
@@ -114,10 +127,16 @@ const Home = () => {
               <button className="px-8 py-4 rounded-xl border border-border/50 hover:border-primary/50 hover:bg-muted/20 transition-all">
                 Browse Protocols
               </button>
-            </div>
+            </a>
+            <button className="retro-button">
+              BROWSE_PROTOCOLS
+            </button>
           </div>
+        </section>
+
+        <div className="text-center text-accent font-display text-lg">
+          -=[ &#x269B; ]=-
         </div>
-      </section>
 
       {/* No Gatekeeping Section */}
       <section className="container mx-auto px-4 py-24">
@@ -203,22 +222,77 @@ const Home = () => {
           <div className="glass-card rounded-xl p-4 animate-fade-in">
             <FeedFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
           </div>
+        </section>
 
-          {/* Projects Feed */}
-          <div className="space-y-6 stagger-children">
-            {mockProjects.map((project) => (
+        <div className="text-center text-accent font-display text-lg">
+          -=[ &#x269B; ]=-
+        </div>
+
+        {/* Featured Experiments Section */}
+        <section className="retro-panel p-8">
+        <h2 className="text-xl md:text-2xl font-display text-center text-accent">
+            FEATURED EXPERIMENTS
+          </h2>
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {mockProjects.slice(0, 3).map((project) => (
               <ProjectCard key={project.id} {...project} />
             ))}
           </div>
+        </section>
 
-          {/* Load More */}
-          <div className="text-center py-8">
-            <button className="px-6 py-3 rounded-xl border border-border/50 hover:border-primary/50 transition-colors text-foreground hover:text-primary">
-              Load More Projects
-            </button>
-          </div>
+        <div className="text-center text-accent font-display text-lg">
+          -=[ &#x269B; ]=-
         </div>
-      </section>
+
+        {/* Credibility Cues Section */}
+        <section className="retro-panel p-8 text-center">
+        <p className="text-base md:text-lg text-muted-foreground">
+            BUILT BY RESEARCHERS ++ OPEN TO CREATORS & SCIENTISTS
+          </p>
+          <div className="mt-8 flex flex-col md:flex-row justify-center gap-8 md:gap-16">
+            <div className="text-center">
+              <p className="text-3xl md:text-4xl font-display text-primary">1,000+</p>
+              <p className="text-sm md:text-base text-muted-foreground">ACTIVE RESEARCHERS</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl md:text-4xl font-display text-primary">500+</p>
+              <p className="text-sm md:text-base text-muted-foreground">PROTOCOLS PUBLISHED</p>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl md:text-4xl font-display text-primary">10,000+</p>
+              <p className="text-sm md:text-base text-muted-foreground">COLLABORATIONS</p>
+            </div>
+          </div>
+        </section>
+
+        <div className="text-center text-accent font-display text-lg">
+          -=[ &#x269B; ]=-
+        </div>
+
+        {/* Feed Section */}
+        <section className="retro-panel p-8">
+        <h2 className="text-2xl font-display text-center text-accent">
+            LIVE FEED
+          </h2>
+          <div className="mt-8 space-y-6">
+            <div className="retro-panel p-4">
+              <FeedFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+            </div>
+
+            <div className="space-y-6">
+              {mockProjects.map((project) => (
+                <ProjectCard key={project.id} {...project} />
+              ))}
+            </div>
+
+            <div className="text-center pt-8">
+              <button className="retro-button">
+                LOAD_MORE
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };
