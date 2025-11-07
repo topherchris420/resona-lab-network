@@ -1,73 +1,265 @@
-# Welcome to your Lovable project
+# Resona
 
-## Project info
+**Where ideas find their frequency**
 
-**URL**: https://lovable.dev/projects/f975a047-f624-4bbb-84af-6b5031772421
+Resona is a next-generation open-source platform — a decentralized social network and research playground where scientists, engineers, and creators publish, share, and evolve frontier experiments together.
 
-## How can I edit this code?
+![Resona Logo](public/favicon.png)
 
-There are several ways of editing your application.
+## 🌌 Vision
 
-**Use Lovable**
+Resona is the **GitHub + Reddit + Hugging Face** of future science — a living network for open discovery.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f975a047-f624-4bbb-84af-6b5031772421) and start prompting.
+- Users post research notes, code, data, and prototypes
+- Others can **Resonate** with or **Fork** projects to evolve them further  
+- Every project contributes to the world's first social graph of scientific resonance
 
-Changes made via Lovable will be committed automatically to this repo.
+## ✨ Key Features
 
-**Use your preferred IDE**
+### 🔬 Research Publishing
+- Markdown-based project pages with syntax highlighting
+- Upload code, datasets, and research documentation
+- AI-powered auto-summarization and tagging
+- Support for multiple license types (open, remixable, attribution)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### 🔊 Social Resonance
+- **Resonate** — Like projects that inspire you
+- **Fork** — Create derivative works and evolutions
+- **Discuss** — Collaborative comment threads
+- Track resonance scores and scientific impact
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 👥 Community & Collaboration
+- User profiles with resonance graphs
+- Public Labs for team collaboration
+- Follow researchers and topics
+- Discover related projects through AI recommendations
 
-Follow these steps:
+### 🎨 Design Philosophy
+- **Aesthetic**: Sleek, dark, minimal, and luminous
+- **Colors**: Deep black with cyan, violet, and silver gradients
+- **Motion**: Smooth animations and particle effects
+- **Typography**: Modern, clean (Inter font family)
+- **Background**: Animated particles representing live resonance
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18+ recommended)
+- npm or yarn
+
+### Installation
+
+```bash
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to project directory
+cd resona
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🛠️ Tech Stack
 
-**Use GitHub Codespaces**
+### Frontend
+- **React 18** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **Tailwind CSS** - Styling and design system
+- **Shadcn UI** - Component library
+- **React Router** - Navigation
+- **Lucide Icons** - Icon system
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Design System
+- Glass-morphism UI components
+- Animated gradient backgrounds
+- Particle system for visual effects
+- Custom design tokens in HSL color space
+- Responsive and accessible components
 
-## What technologies are used for this project?
+## 📁 Project Structure
 
-This project is built with:
+```
+resona/
+├── public/               # Static assets
+│   ├── favicon.png      # App icon
+│   └── robots.txt       # SEO configuration
+├── src/
+│   ├── assets/          # Images and media
+│   ├── components/      # React components
+│   │   ├── ui/         # Shadcn UI components
+│   │   ├── Header.tsx
+│   │   ├── ProjectCard.tsx
+│   │   ├── ParticleBackground.tsx
+│   │   └── AnimatedBackground.tsx
+│   ├── pages/          # Route pages
+│   │   ├── Home.tsx
+│   │   ├── ProjectDetail.tsx
+│   │   ├── Profile.tsx
+│   │   ├── Auth.tsx
+│   │   └── Create.tsx
+│   ├── lib/            # Utilities
+│   ├── hooks/          # Custom React hooks
+│   ├── index.css       # Global styles & design system
+│   ├── App.tsx         # Root component
+│   └── main.tsx        # Entry point
+├── tailwind.config.ts  # Tailwind configuration
+├── vite.config.ts      # Vite configuration
+└── package.json        # Dependencies
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🎨 Design System
 
-## How can I deploy this project?
+### Colors
+- **Background**: `hsl(240 15% 4%)` - Deep space black
+- **Primary**: `hsl(190 100% 50%)` - Cyan/Electric blue
+- **Secondary**: `hsl(270 70% 65%)` - Violet/Purple
+- **Success**: `hsl(150 80% 50%)` - Emerald (for resonance)
+- **Accent**: `hsl(210 20% 85%)` - Silver highlights
 
-Simply open [Lovable](https://lovable.dev/projects/f975a047-f624-4bbb-84af-6b5031772421) and click on Share -> Publish.
+### Typography
+- **Font Family**: Inter (with Helvetica fallbacks)
+- **Letter Spacing**: Tight (-0.02em for headings)
+- **Font Smoothing**: Antialiased for crisp rendering
 
-## Can I connect a custom domain to my Lovable project?
+### Animations
+- Particle background system
+- Animated gradient waves
+- Fade-in and stagger animations
+- Hover scale effects
+- Pulse glow effects
 
-Yes, you can!
+## 🔑 Core Pages
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Home Feed
+- Infinite scrolling feed of latest experiments
+- Smart filters: Trending, New, Following, Experimental
+- Real-time resonance counts
+- Interactive project cards
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Project Detail
+- Full markdown rendering with code syntax highlighting
+- AI-generated summaries
+- Resonance, fork, and discussion actions
+- Author information and related projects
+
+### User Profile
+- Resonance score and statistics
+- Project portfolio
+- Fork history
+- Collaboration network
+- Visual resonance graph (coming soon)
+
+### Create/Publish
+- Markdown editor for research content
+- Automatic abstract generation via AI
+- Tag management (manual + AI-assisted)
+- GitHub and dataset linking
+- License selection
+
+### Authentication
+- Email/password signup and login
+- Guest explore mode
+- Future: Decentralized ID support (Lens, ENS, Ceramic)
+
+## 🚧 Roadmap
+
+### Phase 1: MVP (Current)
+- [x] Core UI and design system
+- [x] Project feed and filtering
+- [x] Project detail pages
+- [x] User profiles
+- [x] Authentication flow
+- [x] Publishing interface
+
+### Phase 2: Backend Integration
+- [ ] Connect to Lovable Cloud/Supabase
+- [ ] User authentication system
+- [ ] Project database and storage
+- [ ] File upload for datasets and code
+- [ ] Real-time updates
+
+### Phase 3: AI Features
+- [ ] OpenAI integration for summarization
+- [ ] AI-powered tag suggestions
+- [ ] Semantic search across projects
+- [ ] Research assistant chatbot
+- [ ] Idea-to-prototype converter
+
+### Phase 4: Social & Collaboration
+- [ ] Fork functionality with version tracking
+- [ ] Comment threads and discussions
+- [ ] Public Labs with real-time collaboration
+- [ ] Following system
+- [ ] Notifications
+
+### Phase 5: Visualization
+- [ ] 3D Resonance Graph (Three.js/D3.js)
+- [ ] Interactive knowledge network
+- [ ] Data visualization tools
+- [ ] Live experiment dashboards
+
+### Future Enhancements
+- [ ] Decentralized storage (IPFS/Arweave)
+- [ ] Blockchain integration for attribution
+- [ ] Mobile apps (React Native)
+- [ ] API for third-party integrations
+- [ ] Plugin system for custom tools
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Here's how you can help:
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit your changes**: `git commit -m 'Add amazing feature'`
+4. **Push to the branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
+
+### Development Guidelines
+- Follow the existing code style and patterns
+- Use TypeScript for type safety
+- Write descriptive commit messages
+- Add comments for complex logic
+- Test your changes thoroughly
+- Update documentation as needed
+
+## 📄 License
+
+This project is open source. License details coming soon.
+
+## 🌐 Links
+
+- **Website**: [resona.lovable.app](https://resona.lovable.app)
+- **Documentation**: Coming soon
+- **Community Discord**: Coming soon
+- **GitHub**: This repository
+
+## 💡 Philosophy
+
+> "Resona is a living network of open science and creation."
+
+We believe that the future of scientific discovery is:
+- **Open** - Knowledge should be freely shared
+- **Collaborative** - Great ideas emerge from connection
+- **Dynamic** - Research evolves through iteration
+- **Resonant** - Quality ideas naturally amplify
+
+## 📧 Contact
+
+For questions, suggestions, or collaboration opportunities:
+- Create an issue in this repository
+- Join our community channels (coming soon)
+- Contact the team (details coming soon)
+
+---
+
+**Built with ❤️ by the Resona community**
+
+*Vers3Dynamics | Meaning Machine | Resonance Intelligence*

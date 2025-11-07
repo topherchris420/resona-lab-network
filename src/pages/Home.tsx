@@ -3,6 +3,7 @@ import Header from '@/components/Header';
 import ProjectCard from '@/components/ProjectCard';
 import FeedFilters from '@/components/FeedFilters';
 import ParticleBackground from '@/components/ParticleBackground';
+import AnimatedBackground from '@/components/AnimatedBackground';
 import heroBackground from '@/assets/hero-background.jpg';
 
 // Mock data
@@ -72,6 +73,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <AnimatedBackground />
       <ParticleBackground />
       <Header />
       
@@ -88,20 +90,20 @@ const Home = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
         
         <div className="relative container mx-auto px-4 py-20 md:py-32">
-          <div className="max-w-4xl mx-auto text-center space-y-6">
-            <h1 className="text-5xl md:text-7xl font-bold">
-              <span className="gradient-text">Where ideas find</span>
+          <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+              <span className="gradient-text animate-pulse-glow">Where ideas find</span>
               <br />
               <span className="text-foreground">their frequency</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               A living network of open science and creation. Publish, share, and evolve frontier experiments together.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-              <button className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:opacity-90 transition-opacity glow-primary">
+              <button className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:opacity-90 hover:scale-105 transition-all glow-primary">
                 Join the Beta
               </button>
-              <button className="px-8 py-4 rounded-xl border border-border/50 hover:border-primary/50 transition-colors">
+              <button className="px-8 py-4 rounded-xl border border-border/50 hover:border-primary/50 hover:bg-muted/20 transition-all">
                 Explore Projects
               </button>
             </div>
@@ -113,12 +115,12 @@ const Home = () => {
       <section className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Filters */}
-          <div className="glass-card rounded-xl p-4">
+          <div className="glass-card rounded-xl p-4 animate-fade-in">
             <FeedFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
           </div>
 
           {/* Projects Feed */}
-          <div className="space-y-6">
+          <div className="space-y-6 stagger-children">
             {mockProjects.map((project) => (
               <ProjectCard key={project.id} {...project} />
             ))}

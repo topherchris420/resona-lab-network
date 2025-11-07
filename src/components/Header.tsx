@@ -2,17 +2,20 @@ import { Search, Plus, Bell, User } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Link } from 'react-router-dom';
+import logo from '@/assets/logo.png';
 
 const Header = () => {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/50 glass-card">
+    <header className="sticky top-0 z-50 w-full border-b border-border/50 glass-card animate-fade-in">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-            <span className="text-lg font-bold text-primary-foreground">R</span>
-          </div>
-          <span className="text-xl font-bold gradient-text hidden sm:block">Resona</span>
+        <Link to="/" className="flex items-center gap-3 group">
+          <img 
+            src={logo} 
+            alt="Resona Logo" 
+            className="w-10 h-10 transition-transform duration-300 group-hover:scale-110"
+          />
+          <span className="text-xl font-bold gradient-text hidden sm:block tracking-tight">Resona</span>
         </Link>
 
         {/* Search */}
