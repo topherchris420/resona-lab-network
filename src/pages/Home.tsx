@@ -2,9 +2,7 @@ import { useState } from 'react';
 import Header from '@/components/Header';
 import ProjectCard from '@/components/ProjectCard';
 import FeedFilters from '@/components/FeedFilters';
-import ParticleBackground from '@/components/ParticleBackground';
 import AnimatedBackground from '@/components/AnimatedBackground';
-import heroBackground from '@/assets/hero-background.jpg';
 
 // Mock data
 const mockProjects = [
@@ -72,88 +70,137 @@ const Home = () => {
   const [activeFilter, setActiveFilter] = useState('trending');
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background scanline-overlay">
       <AnimatedBackground />
-      <ParticleBackground />
       <Header />
       
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div 
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `url(${heroBackground})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
-        
-        <div className="relative container mx-auto px-4 py-24 md:py-40">
-          <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-              <span className="gradient-text animate-pulse-glow">Where ideas find</span>
-              <br />
-              <span className="text-foreground">their frequency</span>
-            </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              A living network of open science and creation. Publish, share, and evolve frontier experiments together.
-            </p>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Publish experiments. Collaborate. Build the science of tomorrow.
-            </p>
-            <p className="text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Open-science friendly • For engineers, researchers, and creators
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
-              <a href="https://github.com/Resonant-Intelligence-Lab" target="_blank" rel="noopener noreferrer">
-                <button className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:opacity-90 hover:scale-105 transition-all glow-primary">
-                  Join the Beta
-                </button>
-              </a>
-              <button className="px-8 py-4 rounded-xl border border-border/50 hover:border-primary/50 hover:bg-muted/20 transition-all">
-                Explore Projects
+      <main className="container mx-auto px-4 py-8 space-y-8">
+        {/* Hero Section */}
+        <section className="retro-panel p-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-display text-primary tracking-widest">
+            RESONA
+          </h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            A NETWORK FOR OPEN SCIENCE & CREATION
+          </p>
+          <p className="mt-2 text-muted-foreground">
+            PUBLISH EXPERIMENTS. COLLABORATE. BUILD THE FUTURE.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
+            <a href="https://github.com/Resonant-Intelligence-Lab" target="_blank" rel="noopener noreferrer">
+              <button className="retro-button">
+                JOIN_THE_BETA
               </button>
+            </a>
+            <button className="retro-button">
+              BROWSE_PROTOCOLS
+            </button>
+          </div>
+        </section>
+
+        <div className="text-center text-accent font-display text-lg">
+          -=[ &#x269B; ]=-
+        </div>
+
+        {/* No Gatekeeping Section */}
+        <section className="retro-panel p-8">
+          <h2 className="text-2xl font-display text-center text-accent">
+            AN OPEN, COLLABORATIVE ECOSYSTEM
+          </h2>
+          <p className="mt-4 text-center text-muted-foreground">
+            Resona is built on the principle of open access. No peer-review barriers, no gatekeeping.
+          </p>
+          <div className="mt-8 grid md:grid-cols-3 gap-8">
+            <div className="retro-panel p-4 text-center">
+              <h3 className="text-xl font-display text-secondary">PUBLISH</h3>
+              <p className="mt-2 text-muted-foreground">
+                Share your protocols and experiments with the world in seconds.
+              </p>
+            </div>
+            <div className="retro-panel p-4 text-center">
+              <h3 className="text-xl font-display text-secondary">FORK & ITERATE</h3>
+              <p className="mt-2 text-muted-foreground">
+                Build upon existing work. Every project is a starting point for the next breakthrough.
+              </p>
+            </div>
+            <div className="retro-panel p-4 text-center">
+              <h3 className="text-xl font-display text-secondary">COLLABORATE</h3>
+              <p className="mt-2 text-muted-foreground">
+                Connect with researchers, engineers, and creators from around the world.
+              </p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* No Gatekeeping Section */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold tracking-tight">
-            Anyone can publish. No peer-review barrier.
+        <div className="text-center text-accent font-display text-lg">
+          -=[ &#x269B; ]=-
+        </div>
+
+        {/* Featured Experiments Section */}
+        <section className="retro-panel p-8">
+        <h2 className="text-2xl font-display text-center text-accent">
+            FEATURED EXPERIMENTS
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Share your work, get feedback, and collaborate with a global community of innovators.
-          </p>
-        </div>
-      </section>
-
-      {/* Feed Section */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto space-y-6">
-          {/* Filters */}
-          <div className="glass-card rounded-xl p-4 animate-fade-in">
-            <FeedFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
-          </div>
-
-          {/* Projects Feed */}
-          <div className="space-y-6 stagger-children">
-            {mockProjects.map((project) => (
+          <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {mockProjects.slice(0, 3).map((project) => (
               <ProjectCard key={project.id} {...project} />
             ))}
           </div>
+        </section>
 
-          {/* Load More */}
-          <div className="text-center py-8">
-            <button className="px-6 py-3 rounded-xl border border-border/50 hover:border-primary/50 transition-colors text-foreground hover:text-primary">
-              Load More Projects
-            </button>
-          </div>
+        <div className="text-center text-accent font-display text-lg">
+          -=[ &#x269B; ]=-
         </div>
-      </section>
+
+        {/* Credibility Cues Section */}
+        <section className="retro-panel p-8 text-center">
+        <p className="text-lg text-muted-foreground">
+            BUILT BY RESEARCHERS ++ OPEN TO CREATORS & SCIENTISTS
+          </p>
+          <div className="mt-8 flex justify-center gap-8 md:gap-16">
+            <div className="text-center">
+              <p className="text-4xl font-display text-primary">1,000+</p>
+              <p className="text-muted-foreground">ACTIVE RESEARCHERS</p>
+            </div>
+            <div className="text-center">
+              <p className="text-4xl font-display text-primary">500+</p>
+              <p className="text-muted-foreground">PROTOCOLS PUBLISHED</p>
+            </div>
+            <div className="text-center">
+              <p className="text-4xl font-display text-primary">10,000+</p>
+              <p className="text-muted-foreground">COLLABORATIONS</p>
+            </div>
+          </div>
+        </section>
+
+        <div className="text-center text-accent font-display text-lg">
+          -=[ &#x269B; ]=-
+        </div>
+
+        {/* Feed Section */}
+        <section className="retro-panel p-8">
+        <h2 className="text-2xl font-display text-center text-accent">
+            LIVE FEED
+          </h2>
+          <div className="mt-8 space-y-6">
+            <div className="retro-panel p-4">
+              <FeedFilters activeFilter={activeFilter} onFilterChange={setActiveFilter} />
+            </div>
+
+            <div className="space-y-6">
+              {mockProjects.map((project) => (
+                <ProjectCard key={project.id} {...project} />
+              ))}
+            </div>
+
+            <div className="text-center pt-8">
+              <button className="retro-button">
+                LOAD_MORE
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };
