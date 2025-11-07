@@ -89,8 +89,8 @@ const Home = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background" />
         
-        <div className="relative container mx-auto px-4 py-20 md:py-32">
-          <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in">
+        <div className="relative container mx-auto px-4 py-24 md:py-40">
+          <div className="max-w-4xl mx-auto text-center space-y-8 animate-fade-in">
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
               <span className="gradient-text animate-pulse-glow">Where ideas find</span>
               <br />
@@ -99,15 +99,35 @@ const Home = () => {
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               A living network of open science and creation. Publish, share, and evolve frontier experiments together.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-              <button className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:opacity-90 hover:scale-105 transition-all glow-primary">
-                Join the Beta
-              </button>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Publish experiments. Collaborate. Build the science of tomorrow.
+            </p>
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Open-science friendly • For engineers, researchers, and creators
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
+              <a href="https://github.com/Resonant-Intelligence-Lab" target="_blank" rel="noopener noreferrer">
+                <button className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:opacity-90 hover:scale-105 transition-all glow-primary">
+                  Join the Beta
+                </button>
+              </a>
               <button className="px-8 py-4 rounded-xl border border-border/50 hover:border-primary/50 hover:bg-muted/20 transition-all">
                 Explore Projects
               </button>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* No Gatekeeping Section */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold tracking-tight">
+            Anyone can publish. No peer-review barrier.
+          </h2>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Share your work, get feedback, and collaborate with a global community of innovators.
+          </p>
         </div>
       </section>
 
