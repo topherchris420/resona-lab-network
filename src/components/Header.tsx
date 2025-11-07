@@ -6,44 +6,44 @@ import logo from '@/assets/logo.png';
 
 const Header = () => {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/50 glass-card animate-fade-in">
+    <header className="w-full retro-panel">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3 group">
+        <Link to="/" className="flex items-center gap-3">
           <img 
             src={logo} 
             alt="Resona Logo" 
-            className="w-10 h-10 transition-transform duration-300 group-hover:scale-110"
+            className="w-8 h-8"
           />
-          <span className="text-xl font-bold gradient-text hidden sm:block tracking-tight">Resona</span>
+          <span className="text-2xl font-display text-primary hidden sm:block">RESONA</span>
         </Link>
 
         {/* Search */}
         <div className="flex-1 max-w-xl relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search experiments, researchers, topics..."
-            className="pl-10 bg-muted/50 border-border/50 focus:border-primary/50 transition-colors"
+            placeholder="SEARCH..."
+            className="pl-10 bg-input border-2 border-border focus:ring-0 focus:border-accent"
           />
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="hover:bg-muted/50">
+          <button className="retro-button p-2">
             <Bell className="h-5 w-5" />
-          </Button>
+          </button>
           
           <Link to="/create">
-            <Button className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity gap-2">
+            <button className="retro-button flex items-center gap-2">
               <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Publish</span>
-            </Button>
+              <span className="hidden sm:inline">PUBLISH</span>
+            </button>
           </Link>
 
           <Link to="/profile">
-            <Button variant="ghost" size="icon" className="hover:bg-muted/50">
+            <button className="retro-button p-2">
               <User className="h-5 w-5" />
-            </Button>
+            </button>
           </Link>
         </div>
       </div>
