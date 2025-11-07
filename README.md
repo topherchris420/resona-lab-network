@@ -8,8 +8,6 @@ Resona is a next-generation open-source platform — a decentralized social netw
 
 ## 🌌 Vision
 
-Resona is the **GitHub + Reddit + Hugging Face** of future science — a living network for open discovery.
-
 - Users post research notes, code, data, and prototypes
 - Others can **Resonate** with or **Fork** projects to evolve them further  
 - Every project contributes to the world's first social graph of scientific resonance
