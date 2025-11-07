@@ -51,7 +51,7 @@ Resona is the **GitHub + Reddit + Hugging Face** of future science — a living 
 
 ```bash
 # Clone the repository
-git clone <YOUR_GIT_URL>
+git clone topherchris420/resona-lab-network
 
 # Navigate to project directory
 cd resona
