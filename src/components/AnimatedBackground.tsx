@@ -15,6 +15,9 @@ const AnimatedBackground = () => {
 
     // Gradient waves that move across the screen
     let gradientOffset = 0;
+    let ripples: { createdAt: number }[] = [];
+    let lastRippleTime = 0;
+
 
     const animate = () => {
       // Create moving gradient background
@@ -39,16 +42,44 @@ const AnimatedBackground = () => {
       ctx.lineWidth = 1;
       
       const gridSize = 60;
-      const time = Date.now() * 0.0003;
+      const time = Date.now();
+      const timeSeconds = time * 0.0003;
       
       for (let x = 0; x < canvas.width; x += gridSize) {
         for (let y = 0; y < canvas.height; y += gridSize) {
-          const wave = Math.sin(x * 0.01 + y * 0.01 + time) * 10;
+          const wave = Math.sin(x * 0.01 + y * 0.01 + timeSeconds) * 10;
           ctx.beginPath();
           ctx.arc(x, y + wave, 1, 0, Math.PI * 2);
           ctx.stroke();
         }
       }
+
+      // Draw cymatic ripples
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+
+      if (time - lastRippleTime > 2000) {
+        ripples.push({ createdAt: time });
+        lastRippleTime = time;
+      }
+
+      ripples = ripples.filter(ripple => {
+        const age = (time - ripple.createdAt) / 1000; // age in seconds
+        const radius = age * 100; // ripple speed
+        const opacity = Math.max(0, 1 - age / 4); // fade out over 4 seconds
+
+        if (opacity === 0) {
+          return false; // remove old ripple
+        }
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0, 240, 255, ${opacity * 0.15})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        return true;
+      });
 
       requestAnimationFrame(animate);
     };
