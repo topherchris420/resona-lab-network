@@ -77,13 +77,13 @@ const Home = () => {
       <main className="container mx-auto px-4 py-8 space-y-8">
         {/* Hero Section */}
         <section className="retro-panel p-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-display text-primary tracking-widest">
+          <h1 className="text-3xl md:text-5xl font-display text-primary tracking-widest">
             RESONA
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-4 text-base md:text-lg text-muted-foreground">
             A NETWORK FOR OPEN SCIENCE & CREATION
           </p>
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-2 text-sm md:text-base text-muted-foreground">
             PUBLISH EXPERIMENTS. COLLABORATE. BUILD THE FUTURE.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
@@ -104,28 +104,28 @@ const Home = () => {
 
         {/* No Gatekeeping Section */}
         <section className="retro-panel p-8">
-          <h2 className="text-2xl font-display text-center text-accent">
+          <h2 className="text-xl md:text-2xl font-display text-center text-accent">
             AN OPEN, COLLABORATIVE ECOSYSTEM
           </h2>
-          <p className="mt-4 text-center text-muted-foreground">
+          <p className="mt-4 text-sm md:text-base text-center text-muted-foreground">
             Resona is built on the principle of open access. No peer-review barriers, no gatekeeping.
           </p>
-          <div className="mt-8 grid md:grid-cols-3 gap-8">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="retro-panel p-4 text-center">
-              <h3 className="text-xl font-display text-secondary">PUBLISH</h3>
-              <p className="mt-2 text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-display text-secondary">PUBLISH</h3>
+              <p className="mt-2 text-sm md:text-base text-muted-foreground">
                 Share your protocols and experiments with the world in seconds.
               </p>
             </div>
             <div className="retro-panel p-4 text-center">
-              <h3 className="text-xl font-display text-secondary">FORK & ITERATE</h3>
-              <p className="mt-2 text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-display text-secondary">FORK & ITERATE</h3>
+              <p className="mt-2 text-sm md:text-base text-muted-foreground">
                 Build upon existing work. Every project is a starting point for the next breakthrough.
               </p>
             </div>
             <div className="retro-panel p-4 text-center">
-              <h3 className="text-xl font-display text-secondary">COLLABORATE</h3>
-              <p className="mt-2 text-muted-foreground">
+              <h3 className="text-lg md:text-xl font-display text-secondary">COLLABORATE</h3>
+              <p className="mt-2 text-sm md:text-base text-muted-foreground">
                 Connect with researchers, engineers, and creators from around the world.
               </p>
             </div>
@@ -138,10 +138,10 @@ const Home = () => {
 
         {/* Featured Experiments Section */}
         <section className="retro-panel p-8">
-        <h2 className="text-2xl font-display text-center text-accent">
+        <h2 className="text-xl md:text-2xl font-display text-center text-accent">
             FEATURED EXPERIMENTS
           </h2>
-          <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {mockProjects.slice(0, 3).map((project) => (
               <ProjectCard key={project.id} {...project} />
             ))}
@@ -154,21 +154,21 @@ const Home = () => {
 
         {/* Credibility Cues Section */}
         <section className="retro-panel p-8 text-center">
-        <p className="text-lg text-muted-foreground">
+        <p className="text-base md:text-lg text-muted-foreground">
             BUILT BY RESEARCHERS ++ OPEN TO CREATORS & SCIENTISTS
           </p>
-          <div className="mt-8 flex justify-center gap-8 md:gap-16">
+          <div className="mt-8 flex flex-col md:flex-row justify-center gap-8 md:gap-16">
             <div className="text-center">
-              <p className="text-4xl font-display text-primary">1,000+</p>
-              <p className="text-muted-foreground">ACTIVE RESEARCHERS</p>
+              <p className="text-3xl md:text-4xl font-display text-primary">1,000+</p>
+              <p className="text-sm md:text-base text-muted-foreground">ACTIVE RESEARCHERS</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl font-display text-primary">500+</p>
-              <p className="text-muted-foreground">PROTOCOLS PUBLISHED</p>
+              <p className="text-3xl md:text-4xl font-display text-primary">500+</p>
+              <p className="text-sm md:text-base text-muted-foreground">PROTOCOLS PUBLISHED</p>
             </div>
             <div className="text-center">
-              <p className="text-4xl font-display text-primary">10,000+</p>
-              <p className="text-muted-foreground">COLLABORATIONS</p>
+              <p className="text-3xl md:text-4xl font-display text-primary">10,000+</p>
+              <p className="text-sm md:text-base text-muted-foreground">COLLABORATIONS</p>
             </div>
           </div>
         </section>
