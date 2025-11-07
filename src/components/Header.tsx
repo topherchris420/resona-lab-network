@@ -29,22 +29,22 @@ const Header = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <button className="retro-button p-2">
+          <Button variant="ghost" className="retro-button p-2">
             <Bell className="h-5 w-5" />
-          </button>
-          
-          <Link to="/create">
-            <button className="retro-button flex items-center gap-2">
+          </Button>
+
+          <Button asChild variant="ghost" className="retro-button">
+            <Link to="/create">
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">PUBLISH</span>
-            </button>
-          </Link>
+            </Link>
+          </Button>
 
-          <Link to="/profile">
-            <button className="retro-button p-2">
+          <Button asChild variant="ghost" className="retro-button p-2">
+            <Link to="/profile" aria-label="User Profile">
               <User className="h-5 w-5" />
-            </button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
     </header>
