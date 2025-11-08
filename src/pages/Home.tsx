@@ -92,9 +92,11 @@ const Home = () => {
                 JOIN_THE_BETA
               </button>
             </a>
-            <button className="retro-button">
-              BROWSE_PROTOCOLS
-            </button>
+            <a href="https://vers3dynamics.com" target="_blank" rel="noopener noreferrer">
+              <button className="retro-button">
+                Vers3Dynamics
+              </button>
+            </a>
           </div>
         </section>
 
