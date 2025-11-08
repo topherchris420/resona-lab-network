@@ -89,7 +89,7 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
             <a href="https://github.com/Resonant-Intelligence-Lab" target="_blank" rel="noopener noreferrer">
               <button className="retro-button">
-                JOIN_THE_BETA
+                Join The Beta
               </button>
             </a>
             <a href="https://vers3dynamics.com" target="_blank" rel="noopener noreferrer">
