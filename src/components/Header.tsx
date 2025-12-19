@@ -1,4 +1,4 @@
-import { Search, Plus, Bell, User } from 'lucide-react';
+import { Search, Plus, Bell, User, FlaskConical } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Link } from 'react-router-dom';
@@ -29,6 +29,13 @@ const Header = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
+          <Button asChild variant="ghost" className="retro-button">
+            <Link to="/labs">
+              <FlaskConical className="h-4 w-4" />
+              <span className="hidden sm:inline">LABS</span>
+            </Link>
+          </Button>
+
           <Button variant="ghost" className="retro-button p-2">
             <Bell className="h-5 w-5" />
           </Button>
