@@ -14,7 +14,176 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      lab_documents: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          lab_id: string
+          title: string
+          updated_at: string
+          yjs_state: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          lab_id: string
+          title?: string
+          updated_at?: string
+          yjs_state?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          lab_id?: string
+          title?: string
+          updated_at?: string
+          yjs_state?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_documents_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "labs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lab_members: {
+        Row: {
+          id: string
+          joined_at: string
+          lab_id: string
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          lab_id: string
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          lab_id?: string
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_members_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "labs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lab_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          lab_id: string
+          user_id: string | null
+          username: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          lab_id: string
+          user_id?: string | null
+          username?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          lab_id?: string
+          user_id?: string | null
+          username?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_messages_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "labs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lab_whiteboards: {
+        Row: {
+          canvas_data: Json | null
+          created_at: string
+          id: string
+          lab_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          canvas_data?: Json | null
+          created_at?: string
+          id?: string
+          lab_id: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          canvas_data?: Json | null
+          created_at?: string
+          id?: string
+          lab_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lab_whiteboards_lab_id_fkey"
+            columns: ["lab_id"]
+            isOneToOne: false
+            referencedRelation: "labs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      labs: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          name: string
+          owner_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name: string
+          owner_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          name?: string
+          owner_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
