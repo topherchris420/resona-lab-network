@@ -136,11 +136,11 @@ This project is open source. License details coming soon.
 
 ## 🌐 Links
 
-- **Website**: [resona.lovable.app](https://resona.lovable.app)
+- **Website**: [Open Lab](https://resona-lab-network.vercel.app)
 - **Documentation**: Coming soon
 - **Community Discord**: Coming soon
 - **GitHub**: This repository
-
+  
 ## 💡 Philosophy
 
 > "Resona is a living network of open science and creation."
