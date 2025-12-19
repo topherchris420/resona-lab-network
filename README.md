@@ -160,6 +160,6 @@ For questions, suggestions, or collaboration opportunities:
 
 ---
 
-**Built with ❤️ by the Resona community**
+**Built with ❤️ by Vers3Dynamics**
 
 *Vers3Dynamics | Meaning Machine | Resonance Intelligence*
