@@ -1,10 +1,12 @@
+import { lazy, Suspense } from 'react';
 import Header from '@/components/Header';
 import ParticleBackground from '@/components/ParticleBackground';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Radio, GitFork, Users, TrendingUp } from 'lucide-react';
 import ProjectCard from '@/components/ProjectCard';
+
+const ResonanceGraph3D = lazy(() => import('@/components/ResonanceGraph3D'));
 
 const Profile = () => {
   const user = {
@@ -124,14 +126,20 @@ const Profile = () => {
           </TabsContent>
 
           <TabsContent value="graph" className="space-y-6">
-            <div className="glass-card rounded-xl p-12 text-center">
-              <div className="space-y-4">
-                <div className="text-6xl">🕸️</div>
+            <div className="glass-card rounded-xl p-4">
+              <div className="mb-4">
                 <h3 className="text-xl font-semibold text-foreground">Resonance Graph</h3>
-                <p className="text-muted-foreground max-w-md mx-auto">
-                  Interactive visualization of your scientific connections and collaborative network. Coming soon.
+                <p className="text-sm text-muted-foreground">
+                  Explore connections between research topics in 3D space
                 </p>
               </div>
+              <Suspense fallback={
+                <div className="w-full h-[500px] rounded-xl bg-background/50 flex items-center justify-center">
+                  <div className="text-muted-foreground animate-pulse">Loading 3D visualization...</div>
+                </div>
+              }>
+                <ResonanceGraph3D />
+              </Suspense>
             </div>
           </TabsContent>
         </Tabs>
