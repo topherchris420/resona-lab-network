@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Save, Users, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 import * as Y from 'yjs';
 import { WebrtcProvider } from 'y-webrtc';
 
@@ -26,6 +27,7 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
   const [collaborators, setCollaborators] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
+  const { user, profile } = useAuth();
   
   const ydocRef = useRef<Y.Doc | null>(null);
   const providerRef = useRef<WebrtcProvider | null>(null);
@@ -78,7 +80,7 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
 
     // Track awareness (connected users)
     const awareness = provider.awareness;
-    const username = `User_${Math.random().toString(36).substr(2, 5)}`;
+    const username = profile?.username || profile?.full_name || 'Researcher';
     awareness.setLocalStateField('user', { name: username, color: getRandomColor() });
 
     awareness.on('change', () => {
@@ -117,6 +119,11 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
   };
 
   const createDocument = async () => {
+    if (!user) {
+      toast({ title: 'Sign in to create documents', variant: 'destructive' });
+      return;
+    }
+
     const { data, error } = await supabase
       .from('lab_documents')
       .insert({ lab_id: labId, title: 'Untitled Document', content: '' })
@@ -137,6 +144,10 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
 
   const saveDocument = useCallback(async () => {
     if (!activeDoc) return;
+    if (!user) {
+      toast({ title: 'Sign in to save documents', variant: 'destructive' });
+      return;
+    }
     
     setSaving(true);
     const { error } = await supabase
@@ -155,7 +166,7 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
         docs.map(d => d.id === activeDoc.id ? { ...d, title, content } : d)
       );
     }
-  }, [activeDoc, title, content, toast]);
+  }, [activeDoc, title, content, toast, user]);
 
   // Auto-save every 30 seconds
   useEffect(() => {
@@ -171,7 +182,7 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
     <div className="glass-card rounded-xl p-4 h-[600px] flex">
       {/* Sidebar */}
       <div className="w-48 border-r border-border pr-4 flex flex-col">
-        <Button onClick={createDocument} size="sm" className="mb-4 bg-gradient-to-r from-primary to-accent">
+        <Button onClick={createDocument} size="sm" className="mb-4 retro-button" disabled={!user}>
           <FileText className="w-4 h-4 mr-2" />
           New Doc
         </Button>
@@ -212,7 +223,7 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
                   <Users className="w-4 h-4" />
                   <span>{collaborators.length} editing</span>
                 </div>
-                <Button onClick={saveDocument} size="sm" disabled={saving}>
+                <Button onClick={saveDocument} size="sm" disabled={saving || !user}>
                   <Save className="w-4 h-4 mr-2" />
                   {saving ? 'Saving...' : 'Save'}
                 </Button>

@@ -4,10 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 interface Message {
   id: string;
   username: string;
+  user_id: string | null;
   content: string;
   created_at: string;
 }
@@ -17,14 +19,15 @@ interface LabChatProps {
 }
 
 const LabChat = ({ labId }: LabChatProps) => {
+  const { user, profile } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [username] = useState(() => `User_${Math.random().toString(36).substr(2, 5)}`);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const username = profile?.username || profile?.full_name || 'Researcher';
 
   useEffect(() => {
     fetchMessages();
-    
+
     const channel = supabase
       .channel(`lab_messages:${labId}`)
       .on(
@@ -33,12 +36,12 @@ const LabChat = ({ labId }: LabChatProps) => {
           event: 'INSERT',
           schema: 'public',
           table: 'lab_messages',
-          filter: `lab_id=eq.${labId}`
+          filter: `lab_id=eq.${labId}`,
         },
         (payload) => {
           const newMsg = payload.new as Message;
           setMessages((prev) => [...prev, newMsg]);
-        }
+        },
       )
       .subscribe();
 
@@ -68,17 +71,16 @@ const LabChat = ({ labId }: LabChatProps) => {
     }
   };
 
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim()) return;
+  const sendMessage = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!user || !newMessage.trim()) return;
 
-    const { error } = await supabase
-      .from('lab_messages')
-      .insert({
-        lab_id: labId,
-        username,
-        content: newMessage.trim()
-      });
+    const { error } = await supabase.from('lab_messages').insert({
+      lab_id: labId,
+      user_id: user.id,
+      username,
+      content: newMessage.trim(),
+    });
 
     if (error) {
       console.error('Error sending message:', error);
@@ -87,35 +89,22 @@ const LabChat = ({ labId }: LabChatProps) => {
     }
   };
 
-  const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
+  const formatTime = (dateString: string) => new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="glass-card rounded-xl p-4 h-[600px] flex flex-col">
+    <div className="retro-panel p-4 h-[600px] flex flex-col">
       <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
         <div className="space-y-4">
           {messages.length === 0 ? (
-            <div className="text-center text-muted-foreground py-8">
-              No messages yet. Start the conversation!
-            </div>
+            <div className="text-center text-muted-foreground py-8">No messages yet. Start the conversation.</div>
           ) : (
             messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex flex-col ${message.username === username ? 'items-end' : 'items-start'}`}
-              >
+              <div key={message.id} className={`flex flex-col ${message.user_id === user?.id ? 'items-end' : 'items-start'}`}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-xs font-medium text-primary">{message.username}</span>
                   <span className="text-xs text-muted-foreground">{formatTime(message.created_at)}</span>
                 </div>
-                <div
-                  className={`max-w-[80%] rounded-xl px-4 py-2 ${
-                    message.username === username
-                      ? 'bg-gradient-to-r from-primary to-accent text-primary-foreground'
-                      : 'bg-muted'
-                  }`}
-                >
+                <div className={`max-w-[80%] border border-border px-4 py-2 ${message.user_id === user?.id ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
                   {message.content}
                 </div>
               </div>
@@ -123,15 +112,16 @@ const LabChat = ({ labId }: LabChatProps) => {
           )}
         </div>
       </ScrollArea>
-      
+
       <form onSubmit={sendMessage} className="flex gap-2 mt-4 pt-4 border-t border-border">
         <Input
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder="Type a message..."
+          onChange={(event) => setNewMessage(event.target.value)}
+          placeholder={user ? 'Type a message...' : 'Sign in to chat'}
           className="flex-1 bg-background/50"
+          disabled={!user}
         />
-        <Button type="submit" size="icon" className="bg-gradient-to-r from-primary to-accent">
+        <Button type="submit" size="icon" className="retro-button" disabled={!user || !newMessage.trim()} aria-label="Send message">
           <Send className="w-4 h-4" />
         </Button>
       </form>

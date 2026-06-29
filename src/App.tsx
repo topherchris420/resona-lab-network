@@ -11,28 +11,30 @@ import Create from "./pages/Create";
 import Labs from "./pages/Labs";
 import LabDetail from "./pages/LabDetail";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "./hooks/use-auth";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/project/:id" element={<ProjectDetail />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/create" element={<Create />} />
-          <Route path="/labs" element={<Labs />} />
-          <Route path="/labs/:id" element={<LabDetail />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/project/:id" element={<ProjectDetail />} />
+            <Route path="/profile/:id?" element={<Profile />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/create" element={<Create />} />
+            <Route path="/labs" element={<Labs />} />
+            <Route path="/labs/:id" element={<LabDetail />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

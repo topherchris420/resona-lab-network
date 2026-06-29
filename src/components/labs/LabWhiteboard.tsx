@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Pencil, Eraser, Square, Circle, Trash2, Save, Undo } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 
 interface Point {
   x: number;
@@ -35,6 +36,7 @@ const LabWhiteboard = ({ labId }: LabWhiteboardProps) => {
   const [currentElement, setCurrentElement] = useState<DrawElement | null>(null);
   const [startPoint, setStartPoint] = useState<Point | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const colors = ['#06b6d4', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#ffffff'];
 
@@ -219,6 +221,11 @@ const LabWhiteboard = ({ labId }: LabWhiteboardProps) => {
   };
 
   const saveWhiteboard = async () => {
+    if (!user) {
+      toast({ title: 'Sign in to save whiteboards', variant: 'destructive' });
+      return;
+    }
+
     // First check if a whiteboard exists for this lab
     const { data: existing } = await supabase
       .from('lab_whiteboards')
@@ -311,7 +318,7 @@ const LabWhiteboard = ({ labId }: LabWhiteboardProps) => {
           <Button variant="outline" size="icon" onClick={clearCanvas}>
             <Trash2 className="w-4 h-4" />
           </Button>
-          <Button onClick={saveWhiteboard} size="sm" className="bg-gradient-to-r from-primary to-accent">
+          <Button onClick={saveWhiteboard} size="sm" className="retro-button" disabled={!user}>
             <Save className="w-4 h-4 mr-2" />
             Save
           </Button>
