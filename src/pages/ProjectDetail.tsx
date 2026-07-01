@@ -10,6 +10,7 @@ import { Radio, GitFork, MessageSquare, Share2, ExternalLink } from 'lucide-reac
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
+import { useProjectRealtime } from '@/hooks/use-project-realtime';
 import { addProjectComment, fetchProjectDetails, forkProject, setProjectResonance } from '@/lib/socialApi';
 import { formatRelativeTime, getInitials, toggleResonanceState, type ProjectComment, type SocialProject } from '@/lib/social';
 
@@ -41,6 +42,20 @@ const ProjectDetail = () => {
       })
       .finally(() => setLoading(false));
   }, [authLoading, id, user?.id]);
+
+  // Live-sync this project's resonance and fork counts across sessions.
+  useProjectRealtime(user?.id, (projectId, stats) => {
+    setProject((current) =>
+      current && current.id === projectId
+        ? {
+            ...current,
+            resonance_count: stats.resonance_count,
+            fork_count: stats.fork_count,
+            has_resonated: stats.has_resonated,
+          }
+        : current,
+    );
+  });
 
   const requireAuth = () => {
     if (user) return true;
@@ -151,7 +166,7 @@ const ProjectDetail = () => {
                   <p className="text-sm">@{project.author_username}</p>
                 </div>
               </Link>
-              <span className="text-sm">•</span>
+              <span className="text-sm">â€¢</span>
               <span className="text-sm">{formatRelativeTime(project.created_at)}</span>
             </div>
           </div>

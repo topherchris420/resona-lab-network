@@ -7,6 +7,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
+import { useProjectRealtime } from '@/hooks/use-project-realtime';
 import { fetchProjects, forkProject, setProjectResonance } from '@/lib/socialApi';
 import { filterProjectsForFeed, toggleResonanceState, type FeedFilter, type SocialProject } from '@/lib/social';
 
@@ -36,6 +37,24 @@ const Home = () => {
       })
       .finally(() => setLoading(false));
   }, [authLoading, user?.id]);
+
+  // Live-sync resonance and fork counts across every open session.
+  useProjectRealtime(user?.id, (projectId, stats) => {
+    setProjects((current) =>
+      current.map((item) =>
+        item.id === projectId
+          ? {
+              ...item,
+              resonance_count: stats.resonance_count,
+              fork_count: stats.fork_count,
+              comment_count: stats.comment_count,
+              has_resonated: stats.has_resonated,
+              is_trending: stats.resonance_count + stats.comment_count + stats.fork_count >= 3,
+            }
+          : item,
+      ),
+    );
+  });
 
   const featuredProjects = useMemo(
     () => filterProjectsForFeed(projects, { filter: 'trending', query: '' }).slice(0, 3),
