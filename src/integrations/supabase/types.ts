@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "follows_follower_id_fkey"
+            columns: ["follower_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "follows_following_id_fkey"
+            columns: ["following_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lab_documents: {
         Row: {
           content: string | null
@@ -183,6 +216,266 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      notifications: {
+        Row: {
+          actor_id: string
+          created_at: string
+          id: string
+          kind: string
+          project_id: string | null
+          read_at: string | null
+          recipient_id: string
+        }
+        Insert: {
+          actor_id: string
+          created_at?: string
+          id?: string
+          kind: string
+          project_id?: string | null
+          read_at?: string | null
+          recipient_id: string
+        }
+        Update: {
+          actor_id?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          project_id?: string | null
+          read_at?: string | null
+          recipient_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          full_name: string
+          id: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string
+          id: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      project_comments: {
+        Row: {
+          author_id: string
+          content: string
+          created_at: string
+          id: string
+          project_id: string
+        }
+        Insert: {
+          author_id: string
+          content: string
+          created_at?: string
+          id?: string
+          project_id: string
+        }
+        Update: {
+          author_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_comments_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_comments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_forks: {
+        Row: {
+          author_id: string
+          created_at: string
+          forked_project_id: string
+          id: string
+          source_project_id: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          forked_project_id: string
+          id?: string
+          source_project_id: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          forked_project_id?: string
+          id?: string
+          source_project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_forks_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_forks_forked_project_id_fkey"
+            columns: ["forked_project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_forks_source_project_id_fkey"
+            columns: ["source_project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_resonances: {
+        Row: {
+          created_at: string
+          project_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          project_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          project_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_resonances_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_resonances_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          abstract: string
+          author_id: string
+          content: string
+          created_at: string
+          dataset_url: string | null
+          github_url: string | null
+          id: string
+          source_project_id: string | null
+          tags: string[]
+          title: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          abstract?: string
+          author_id: string
+          content?: string
+          created_at?: string
+          dataset_url?: string | null
+          github_url?: string | null
+          id?: string
+          source_project_id?: string | null
+          tags?: string[]
+          title: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          abstract?: string
+          author_id?: string
+          content?: string
+          created_at?: string
+          dataset_url?: string | null
+          github_url?: string | null
+          id?: string
+          source_project_id?: string | null
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_source_project_id_fkey"
+            columns: ["source_project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
