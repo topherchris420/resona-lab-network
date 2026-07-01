@@ -174,7 +174,19 @@ export const ensureProfile = async (user: User) => {
 
   if (error) throw error;
 
-  return data as SocialProfile;
+  return {
+    id: data.id,
+    full_name: data.full_name,
+    username: data.username,
+    bio: data.bio,
+    avatar_url: data.avatar_url,
+    created_at: data.created_at,
+    resonance_score: 0,
+    project_count: 0,
+    fork_count: 0,
+    collaborator_count: 0,
+    is_followed_by_viewer: false,
+  } satisfies SocialProfile;
 };
 
 export const fetchProjects = async (currentUserId?: string | null) => {
