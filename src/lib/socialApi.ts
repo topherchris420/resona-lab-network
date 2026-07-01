@@ -28,7 +28,7 @@ const projectSelect = `
   author:profiles!projects_author_id_fkey(id, full_name, username, bio, avatar_url),
   project_comments(id),
   project_resonances(user_id),
-  project_forks(id, author_id, forked_project_id)
+  project_forks:project_forks!project_forks_source_project_id_fkey(id, author_id, forked_project_id)
 `;
 
 const commentSelect = `
