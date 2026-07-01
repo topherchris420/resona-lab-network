@@ -7,6 +7,7 @@ import AnimatedBackground from '@/components/AnimatedBackground';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/use-auth';
+import { useProjectRealtime } from '@/hooks/use-project-realtime';
 import { fetchProjects, forkProject, setProjectResonance } from '@/lib/socialApi';
 import { filterProjectsForFeed, toggleResonanceState, type FeedFilter, type SocialProject } from '@/lib/social';
 
