@@ -166,7 +166,7 @@ const ProjectDetail = () => {
                   <p className="text-sm">@{project.author_username}</p>
                 </div>
               </Link>
-              <span className="text-sm">•</span>
+              <span className="text-sm">â€¢</span>
               <span className="text-sm">{formatRelativeTime(project.created_at)}</span>
             </div>
           </div>
