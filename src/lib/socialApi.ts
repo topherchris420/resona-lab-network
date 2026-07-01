@@ -288,6 +288,35 @@ export const addProjectComment = async (project: SocialProject, userId: string, 
   return mapCommentRow(data);
 };
 
+export interface ProjectLiveStats {
+  resonance_count: number;
+  fork_count: number;
+  comment_count: number;
+  has_resonated: boolean;
+}
+
+// Reads authoritative interaction counts straight from the database so realtime
+// listeners can reconcile optimistic UI without ever double-counting.
+export const fetchProjectStats = async (
+  projectId: string,
+  currentUserId?: string | null,
+): Promise<ProjectLiveStats> => {
+  const [{ data: resonances }, { count: forkCount }, { count: commentCount }] = await Promise.all([
+    db.from('project_resonances').select('user_id').eq('project_id', projectId),
+    db.from('project_forks').select('id', { count: 'exact', head: true }).eq('source_project_id', projectId),
+    db.from('project_comments').select('id', { count: 'exact', head: true }).eq('project_id', projectId),
+  ]);
+
+  const resonanceRows = resonances || [];
+
+  return {
+    resonance_count: resonanceRows.length,
+    fork_count: forkCount || 0,
+    comment_count: commentCount || 0,
+    has_resonated: Boolean(currentUserId) && resonanceRows.some((row: any) => row.user_id === currentUserId),
+  };
+};
+
 export const setProjectResonance = async (project: SocialProject, userId: string, shouldResonate: boolean) => {
   if (shouldResonate) {
     const { error } = await db.from('project_resonances').upsert({
