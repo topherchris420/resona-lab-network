@@ -3,7 +3,7 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
 
 // src/lib/mcp/tools/search-projects.ts
 import { createClient } from "npm:@supabase/supabase-js@^2.89.0";
@@ -105,13 +105,138 @@ var list_recent_projects_default = defineTool3({
   }
 });
 
+// src/lib/mcp/tools/resonate-project.ts
+import { createClient as createClient4 } from "npm:@supabase/supabase-js@^2.89.0";
+import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z as z4 } from "npm:zod@^3.25.76";
+function supabaseForUser(ctx) {
+  return createClient4(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
+    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var resonate_project_default = defineTool4({
+  name: "resonate_project",
+  title: "Resonate with a project",
+  description: "Resonate with (like/amplify) a public research project as the signed-in user, or remove your resonance. Returns the project's updated resonance count.",
+  inputSchema: {
+    project_id: z4.string().trim().min(1).describe("The project id (UUID) to resonate with."),
+    resonate: z4.boolean().optional().describe("true to resonate (default), false to remove an existing resonance.")
+  },
+  annotations: { readOnlyHint: false, idempotentHint: true, openWorldHint: false },
+  handler: async ({ project_id, resonate }, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    }
+    const supabase = supabaseForUser(ctx);
+    const userId = ctx.getUserId();
+    const shouldResonate = resonate ?? true;
+    if (shouldResonate) {
+      const { error } = await supabase.from("project_resonances").upsert({ project_id, user_id: userId });
+      if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    } else {
+      const { error } = await supabase.from("project_resonances").delete().eq("project_id", project_id).eq("user_id", userId);
+      if (error) return { content: [{ type: "text", text: error.message }], isError: true };
+    }
+    const { count } = await supabase.from("project_resonances").select("user_id", { count: "exact", head: true }).eq("project_id", project_id);
+    const result = {
+      project_id,
+      has_resonated: shouldResonate,
+      resonance_count: count ?? 0
+    };
+    return {
+      content: [
+        {
+          type: "text",
+          text: `${shouldResonate ? "Resonated with" : "Removed resonance from"} project ${project_id}. Total resonances: ${count ?? 0}.`
+        }
+      ],
+      structuredContent: result
+    };
+  }
+});
+
+// src/lib/mcp/tools/fork-project.ts
+import { createClient as createClient5 } from "npm:@supabase/supabase-js@^2.89.0";
+import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { z as z5 } from "npm:zod@^3.25.76";
+function supabaseForUser2(ctx) {
+  return createClient5(process.env.SUPABASE_URL, process.env.SUPABASE_PUBLISHABLE_KEY, {
+    global: { headers: { Authorization: `Bearer ${ctx.getToken()}` } },
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+}
+var fork_project_default = defineTool5({
+  name: "fork_project",
+  title: "Fork a project",
+  description: "Fork (evolve) a public research project as the signed-in user. Creates a new derivative project owned by the user and records the fork link back to the source. Returns the new project id.",
+  inputSchema: {
+    project_id: z5.string().trim().min(1).describe("The source project id (UUID) to fork."),
+    title: z5.string().trim().optional().describe("Optional title for the fork. Defaults to 'Fork of <original title>'.")
+  },
+  annotations: { readOnlyHint: false, idempotentHint: false, openWorldHint: false },
+  handler: async ({ project_id, title }, ctx) => {
+    if (!ctx.isAuthenticated()) {
+      return { content: [{ type: "text", text: "Not authenticated." }], isError: true };
+    }
+    const supabase = supabaseForUser2(ctx);
+    const userId = ctx.getUserId();
+    const { data: source, error: sourceError } = await supabase.from("projects").select("id, title, abstract, content, tags, github_url, dataset_url").eq("id", project_id).eq("visibility", "public").maybeSingle();
+    if (sourceError) return { content: [{ type: "text", text: sourceError.message }], isError: true };
+    if (!source) {
+      return { content: [{ type: "text", text: "Source project not found or not public." }], isError: true };
+    }
+    const { data: created, error: createError } = await supabase.from("projects").insert({
+      author_id: userId,
+      title: (title?.trim() || `Fork of ${source.title}`).slice(0, 255),
+      abstract: source.abstract,
+      content: source.content,
+      tags: source.tags,
+      github_url: source.github_url,
+      dataset_url: source.dataset_url,
+      source_project_id: source.id
+    }).select("id").single();
+    if (createError) return { content: [{ type: "text", text: createError.message }], isError: true };
+    const { error: forkError } = await supabase.from("project_forks").insert({
+      source_project_id: source.id,
+      forked_project_id: created.id,
+      author_id: userId
+    });
+    if (forkError) return { content: [{ type: "text", text: forkError.message }], isError: true };
+    const result = {
+      source_project_id: source.id,
+      forked_project_id: created.id
+    };
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Forked project ${source.id} into new project ${created.id}.`
+        }
+      ],
+      structuredContent: result
+    };
+  }
+});
+
 // src/lib/mcp/index.ts
+var projectRef = "huimhiootbkwcbhhlruj";
 var mcp_default = defineMcp({
   name: "resona-mcp",
   title: "Resona MCP",
-  version: "0.1.0",
-  instructions: "Tools for Resona, a decentralized social network for science. Use `search_projects` to find public research projects by keyword or tag, `list_recent_projects` to browse the newest posts, and `get_project` to read a project's full content and interaction counts.",
-  tools: [search_projects_default, get_project_default, list_recent_projects_default]
+  version: "0.2.0",
+  instructions: "Tools for Resona, a decentralized social network for science. Read tools (`search_projects`, `list_recent_projects`, `get_project`) work over public data. Write tools (`resonate_project`, `fork_project`) act as the signed-in user: `resonate_project` amplifies or unamplifies a project, and `fork_project` evolves a project into a new derivative owned by the user.",
+  auth: auth.oauth.issuer({
+    issuer: `https://${projectRef}.supabase.co/auth/v1`,
+    acceptedAudiences: "authenticated"
+  }),
+  tools: [
+    search_projects_default,
+    get_project_default,
+    list_recent_projects_default,
+    resonate_project_default,
+    fork_project_default
+  ]
 });
 
 // lovable-mcp-supabase-entry.ts

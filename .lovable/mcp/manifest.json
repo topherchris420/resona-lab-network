@@ -3,12 +3,16 @@
   "sdk_version": "0.20.0",
   "path": "/functions/v1/mcp",
   "auth": {
-    "type": "none"
+    "type": "oauth",
+    "issuer": "https://huimhiootbkwcbhhlruj.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
   },
   "mcp": {
     "server": {
       "name": "resona-mcp",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "title": "Resona MCP"
     },
     "tools": [
@@ -93,6 +97,66 @@
               "description": "Maximum results to return (default 10)."
             }
           },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "resonate_project",
+        "title": "Resonate with a project",
+        "description": "Resonate with (like/amplify) a public research project as the signed-in user, or remove your resonance. Returns the project's updated resonance count.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The project id (UUID) to resonate with."
+            },
+            "resonate": {
+              "type": "boolean",
+              "description": "true to resonate (default), false to remove an existing resonance."
+            }
+          },
+          "required": [
+            "project_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "fork_project",
+        "title": "Fork a project",
+        "description": "Fork (evolve) a public research project as the signed-in user. Creates a new derivative project owned by the user and records the fork link back to the source. Returns the new project id.",
+        "annotations": {
+          "readOnlyHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The source project id (UUID) to fork."
+            },
+            "title": {
+              "type": "string",
+              "description": "Optional title for the fork. Defaults to 'Fork of <original title>'."
+            }
+          },
+          "required": [
+            "project_id"
+          ],
           "additionalProperties": false,
           "$schema": "http://json-schema.org/draft-07/schema#"
         },
