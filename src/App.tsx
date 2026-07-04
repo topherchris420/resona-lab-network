@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Create from "./pages/Create";
 import Labs from "./pages/Labs";
 import LabDetail from "./pages/LabDetail";
+import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./hooks/use-auth";
 
