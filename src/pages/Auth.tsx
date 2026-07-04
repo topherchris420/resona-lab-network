@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import ParticleBackground from '@/components/ParticleBackground';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,15 @@ import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
+
+  const getNextPath = () => {
+    const next = searchParams.get('next');
+    // Only allow same-origin relative paths.
+    if (next && next.startsWith('/') && !next.startsWith('//')) return next;
+    return null;
+  };
   const { user, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('login');
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +31,11 @@ const Auth = () => {
 
   useEffect(() => {
     if (!authLoading && user) {
+      const next = getNextPath();
+      if (next) {
+        window.location.href = next;
+        return;
+      }
       navigate(`/profile/${user.id}`);
     }
   }, [authLoading, navigate, user]);
@@ -45,6 +58,11 @@ const Auth = () => {
     }
 
     toast({ title: 'Welcome back to Resona' });
+    const next = getNextPath();
+    if (next) {
+      window.location.href = next;
+      return;
+    }
     navigate('/');
   };
 
@@ -122,7 +140,7 @@ const Auth = () => {
                     type="password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className="bg-muted/50 border-border/50"
                     required
                   />
@@ -189,7 +207,7 @@ const Auth = () => {
                     type="password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className="bg-muted/50 border-border/50"
                     required
                     minLength={8}
@@ -203,7 +221,7 @@ const Auth = () => {
                     type="password"
                     value={confirmPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
-                    placeholder="••••••••"
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className="bg-muted/50 border-border/50"
                     required
                     minLength={8}
