@@ -31,6 +31,7 @@ const App = () => (
             <Route path="/create" element={<Create />} />
             <Route path="/labs" element={<Labs />} />
             <Route path="/labs/:id" element={<LabDetail />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
