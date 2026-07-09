@@ -1,4 +1,4 @@
-# Resona
+# Resona Blog
 
 **Where ideas find their frequency**
 
