@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Activity, ArrowRight, Gauge, Waves, Zap } from "lucide-react";
+import { Activity, ArrowRight, Gauge, Waves, Wifi, WifiOff, Zap } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                      */
@@ -272,7 +273,7 @@ export default function MacroTelemetryCard() {
   const [termPremiumShock, setTermPremiumShock] = useState<number>(45); // bps
   const [aociInclusion, setAociInclusion] = useState<boolean>(true);
 
-  /* --------------------------- Derived state ---------------------------- */
+  /* --------------------------- Live telemetry --------------------------- */
   const [telemetry, setTelemetry] = useState<DRRTelemetryData>({
     resonanceDepth: 0.24,
     dominantFrequency: "0.034 Hz",
@@ -280,69 +281,48 @@ export default function MacroTelemetryCard() {
     significantEdges: [],
     bankCapitalErosion: 3.1,
   });
-
-  // Static edge topology whose weights breathe with the shock magnitude.
-  const baseEdges = useMemo(
-    () => [
-      { source: "U.S. 10Y Term Premium", target: "FX Swap Basis Spreads" },
-      { source: "AOCI Unrealized Losses", target: "Tier-1 Capital Ratio" },
-      { source: "Wholesale Funding Cost", target: "LFBO Liquidity Buffer" },
-      { source: "MBS Duration Gap", target: "Deposit Beta Sensitivity" },
-      { source: "Repo Haircut Spiral", target: "Interbank Contagion Index" },
-    ],
-    []
-  );
+  // Connection state to the backend DRR engine.
+  const [feedState, setFeedState] = useState<"live" | "loading" | "error">("loading");
 
   /**
-   * Reactive DRR engine simulation. Any change to the term-premium shock or the
-   * AOCI inclusion switch mathematically re-derives the full telemetry payload.
+   * Streams authoritative telemetry from the backend DRR endpoint. Each change
+   * to the term-premium shock or AOCI switch is debounced, then posted to the
+   * `drr-telemetry` edge function, which returns the freshly computed payload.
    */
   useEffect(() => {
-    const shockNorm = termPremiumShock / 300; // 0 → 1
-    const aociFactor = aociInclusion ? 1 : 0.6;
+    let cancelled = false;
+    const controller = new AbortController();
 
-    // Resonance depth grows non-linearly with the shock, amplified by AOCI.
-    let resonanceDepth = Math.min(
-      1,
-      0.15 + Math.pow(shockNorm, 1.4) * 0.85 * aociFactor
-    );
+    const timer = window.setTimeout(async () => {
+      setFeedState((s) => (s === "error" ? "loading" : s));
+      try {
+        const { data, error } = await supabase.functions.invoke<DRRTelemetryData>(
+          "drr-telemetry",
+          { body: { termPremiumShock, aociInclusion } }
+        );
+        if (cancelled) return;
+        if (error || !data) throw error ?? new Error("Empty telemetry payload");
+        setTelemetry({
+          resonanceDepth: data.resonanceDepth,
+          dominantFrequency: data.dominantFrequency,
+          systemicStatus: data.systemicStatus,
+          significantEdges: data.significantEdges ?? [],
+          bankCapitalErosion: data.bankCapitalErosion,
+        });
+        setFeedState("live");
+      } catch (err) {
+        if (cancelled) return;
+        console.error("DRR telemetry fetch failed:", err);
+        setFeedState("error");
+      }
+    }, 180);
 
-    // Capital erosion deepens with the shock magnitude.
-    let bankCapitalErosion = 2.4 + shockNorm * 6.5 * aociFactor;
-
-    // Dominant frequency drifts upward as the system tightens.
-    const dominantFrequency = `${(0.021 + shockNorm * 0.058 * aociFactor).toFixed(3)} Hz`;
-
-    // Classify systemic status.
-    let systemicStatus: DRRTelemetryData["systemicStatus"] = "STABLE";
-    if (resonanceDepth > 0.55) systemicStatus = "COUPLING";
-
-    // Critical override: heavy shock while AOCI losses are recognized.
-    if (termPremiumShock > 150 && aociInclusion) {
-      systemicStatus = "CRITICAL";
-      resonanceDepth = Math.max(resonanceDepth, 0.82);
-      // Under a mark-to-market cliff, recognized erosion re-rates below 6.5%.
-      bankCapitalErosion = Math.min(bankCapitalErosion, 6.4);
-    }
-
-    const significantEdges = baseEdges
-      .map((edge, i) => ({
-        ...edge,
-        weight: Math.min(
-          0.99,
-          0.32 + shockNorm * 0.6 * aociFactor + (baseEdges.length - i) * 0.03
-        ),
-      }))
-      .sort((a, b) => b.weight - a.weight);
-
-    setTelemetry({
-      resonanceDepth,
-      dominantFrequency,
-      systemicStatus,
-      significantEdges,
-      bankCapitalErosion,
-    });
-  }, [termPremiumShock, aociInclusion, baseEdges]);
+    return () => {
+      cancelled = true;
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [termPremiumShock, aociInclusion]);
 
   const status = STATUS_TOKENS[telemetry.systemicStatus];
 
@@ -380,11 +360,35 @@ export default function MacroTelemetryCard() {
               Target Array: LFBO Wholesale Funding Nodes
             </p>
           </div>
-          <div
-            className={`flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold tracking-[0.14em] ${status.text}`}
-          >
-            <Activity className="h-3.5 w-3.5" />
-            {status.label}
+          <div className="flex items-center gap-2">
+            {/* Backend DRR feed connection indicator */}
+            <div
+              className={`flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${
+                feedState === "live"
+                  ? "text-emerald-300"
+                  : feedState === "loading"
+                  ? "text-cyan-300"
+                  : "text-rose-300"
+              }`}
+              title={
+                feedState === "error"
+                  ? "Backend DRR feed unavailable"
+                  : "Backend DRR telemetry feed"
+              }
+            >
+              {feedState === "error" ? (
+                <WifiOff className="h-3 w-3" />
+              ) : (
+                <Wifi className={`h-3 w-3 ${feedState === "loading" ? "animate-pulse" : ""}`} />
+              )}
+              {feedState === "live" ? "Live" : feedState === "loading" ? "Sync" : "Offline"}
+            </div>
+            <div
+              className={`flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold tracking-[0.14em] ${status.text}`}
+            >
+              <Activity className="h-3.5 w-3.5" />
+              {status.label}
+            </div>
           </div>
         </header>
 
