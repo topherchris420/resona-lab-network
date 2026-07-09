@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Activity, ArrowRight, Gauge, Waves, Zap } from "lucide-react";
+import { Activity, ArrowRight, Gauge, Waves, Wifi, WifiOff, Zap } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                      */
