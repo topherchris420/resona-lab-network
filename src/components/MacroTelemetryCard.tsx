@@ -360,11 +360,35 @@ export default function MacroTelemetryCard() {
               Target Array: LFBO Wholesale Funding Nodes
             </p>
           </div>
-          <div
-            className={`flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold tracking-[0.14em] ${status.text}`}
-          >
-            <Activity className="h-3.5 w-3.5" />
-            {status.label}
+          <div className="flex items-center gap-2">
+            {/* Backend DRR feed connection indicator */}
+            <div
+              className={`flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${
+                feedState === "live"
+                  ? "text-emerald-300"
+                  : feedState === "loading"
+                  ? "text-cyan-300"
+                  : "text-rose-300"
+              }`}
+              title={
+                feedState === "error"
+                  ? "Backend DRR feed unavailable"
+                  : "Backend DRR telemetry feed"
+              }
+            >
+              {feedState === "error" ? (
+                <WifiOff className="h-3 w-3" />
+              ) : (
+                <Wifi className={`h-3 w-3 ${feedState === "loading" ? "animate-pulse" : ""}`} />
+              )}
+              {feedState === "live" ? "Live" : feedState === "loading" ? "Sync" : "Offline"}
+            </div>
+            <div
+              className={`flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold tracking-[0.14em] ${status.text}`}
+            >
+              <Activity className="h-3.5 w-3.5" />
+              {status.label}
+            </div>
           </div>
         </header>
 
