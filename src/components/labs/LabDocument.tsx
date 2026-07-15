@@ -33,55 +33,64 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
   const providerRef = useRef<WebrtcProvider | null>(null);
 
   useEffect(() => {
+    let cancelled = false;
+
+    const fetchDocuments = async () => {
+      const { data, error } = await supabase
+        .from('lab_documents')
+        .select('*')
+        .eq('lab_id', labId)
+        .order('updated_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching documents:', error);
+      } else if (!cancelled) {
+        const first = data?.[0] ?? null;
+        setDocuments(data || []);
+        setActiveDoc(first);
+        setContent(first?.content || '');
+        setTitle(first?.title || '');
+      }
+    };
+
     fetchDocuments();
     return () => {
-      providerRef.current?.destroy();
-      ydocRef.current?.destroy();
+      cancelled = true;
     };
   }, [labId]);
 
+  const username = profile?.username || profile?.full_name || 'Researcher';
+  const usernameRef = useRef(username);
+  usernameRef.current = username;
+  const activeDocId = activeDoc?.id;
+  const initialContentRef = useRef('');
+  initialContentRef.current = activeDoc?.content || '';
+
+  // Keep the presence name in sync once the profile hydrates.
   useEffect(() => {
-    if (activeDoc) {
-      setupCollaboration(activeDoc.id);
+    const awareness = providerRef.current?.awareness;
+    const current = awareness?.getLocalState()?.user;
+    if (awareness && current && current.name !== username) {
+      awareness.setLocalStateField('user', { ...current, name: username });
     }
-  }, [activeDoc?.id]);
+  }, [username]);
 
-  const fetchDocuments = async () => {
-    const { data, error } = await supabase
-      .from('lab_documents')
-      .select('*')
-      .eq('lab_id', labId)
-      .order('updated_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching documents:', error);
-    } else if (data && data.length > 0) {
-      setDocuments(data);
-      setActiveDoc(data[0]);
-      setContent(data[0].content || '');
-      setTitle(data[0].title);
-    }
-  };
-
-  const setupCollaboration = (docId: string) => {
-    // Clean up previous connection
-    providerRef.current?.destroy();
-    ydocRef.current?.destroy();
+  useEffect(() => {
+    if (!activeDocId) return;
 
     // Create new Yjs document
     const ydoc = new Y.Doc();
     ydocRef.current = ydoc;
 
     // Create WebRTC provider for real-time collaboration
-    const provider = new WebrtcProvider(`resona-doc-${docId}`, ydoc, {
+    const provider = new WebrtcProvider(`resona-doc-${activeDocId}`, ydoc, {
       signaling: ['wss://signaling.yjs.dev'],
     });
     providerRef.current = provider;
 
     // Track awareness (connected users)
     const awareness = provider.awareness;
-    const username = profile?.username || profile?.full_name || 'Researcher';
-    awareness.setLocalStateField('user', { name: username, color: getRandomColor() });
+    awareness.setLocalStateField('user', { name: usernameRef.current, color: getRandomColor() });
 
     awareness.on('change', () => {
       const states = Array.from(awareness.getStates().values());
@@ -93,16 +102,24 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
 
     // Sync text content
     const ytext = ydoc.getText('content');
-    
+
     ytext.observe(() => {
       setContent(ytext.toString());
     });
 
     // Initialize with current content if empty
-    if (ytext.length === 0 && activeDoc?.content) {
-      ytext.insert(0, activeDoc.content);
+    if (ytext.length === 0 && initialContentRef.current) {
+      ytext.insert(0, initialContentRef.current);
     }
-  };
+
+    return () => {
+      provider.destroy();
+      ydoc.destroy();
+      providerRef.current = null;
+      ydocRef.current = null;
+      setCollaborators([]);
+    };
+  }, [activeDocId]);
 
   const getRandomColor = () => {
     const colors = ['#06b6d4', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b'];
@@ -161,22 +178,25 @@ const LabDocument = ({ labId }: LabDocumentProps) => {
       toast({ title: 'Failed to save document', variant: 'destructive' });
     } else {
       toast({ title: 'Document saved!' });
-      // Update local state
-      setDocuments(docs => 
+      // Update local state so the auto-save dirty check clears
+      setDocuments(docs =>
         docs.map(d => d.id === activeDoc.id ? { ...d, title, content } : d)
       );
+      setActiveDoc(doc => (doc && doc.id === activeDoc.id ? { ...doc, title, content } : doc));
     }
   }, [activeDoc, title, content, toast, user]);
 
   // Auto-save every 30 seconds
   useEffect(() => {
+    if (!user) return;
+
     const interval = setInterval(() => {
       if (activeDoc && content !== activeDoc.content) {
         saveDocument();
       }
     }, 30000);
     return () => clearInterval(interval);
-  }, [activeDoc, content, saveDocument]);
+  }, [activeDoc, content, saveDocument, user]);
 
   return (
     <div className="glass-card rounded-xl p-4 h-[600px] flex">

@@ -21,11 +21,14 @@ export default defineTool({
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ query, tag, limit }) => {
     const supabase = publicSupabase();
+    // Commas and parentheses are PostgREST .or() syntax, and \ % _ are ILIKE
+    // wildcards — neutralize both so the keyword is matched literally.
+    const keyword = query.replace(/[,()]/g, " ").replace(/[\\%_]/g, "\\$&").trim();
     let request = supabase
       .from("projects")
       .select("id, title, abstract, tags, author_id, created_at")
       .eq("visibility", "public")
-      .or(`title.ilike.%${query}%,abstract.ilike.%${query}%`)
+      .or(`title.ilike.%${keyword}%,abstract.ilike.%${keyword}%`)
       .order("created_at", { ascending: false })
       .limit(limit ?? 10);
 
