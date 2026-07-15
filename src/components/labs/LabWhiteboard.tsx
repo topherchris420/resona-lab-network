@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Pencil, Eraser, Square, Circle, Trash2, Save, Undo } from 'lucide-react';
@@ -28,6 +29,7 @@ interface LabWhiteboardProps {
 
 const LabWhiteboard = ({ labId }: LabWhiteboardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const channelRef = useRef<RealtimeChannel | null>(null);
   const [elements, setElements] = useState<DrawElement[]>([]);
   const [history, setHistory] = useState<DrawElement[][]>([]);
   const [tool, setTool] = useState<'pen' | 'eraser' | 'rect' | 'circle'>('pen');
@@ -41,50 +43,48 @@ const LabWhiteboard = ({ labId }: LabWhiteboardProps) => {
   const colors = ['#06b6d4', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#ef4444', '#ffffff'];
 
   useEffect(() => {
+    let cancelled = false;
+
+    const loadWhiteboard = async () => {
+      const { data, error } = await supabase
+        .from('lab_whiteboards')
+        .select('*')
+        .eq('lab_id', labId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error loading whiteboard:', error);
+      } else if (!cancelled && data?.canvas_data) {
+        // canvas_data is already parsed by Supabase client
+        setElements(data.canvas_data as unknown as DrawElement[]);
+      }
+    };
+
     loadWhiteboard();
-    setupRealtime();
-  }, [labId]);
 
-  useEffect(() => {
-    redrawCanvas();
-  }, [elements]);
-
-  const loadWhiteboard = async () => {
-    const { data, error } = await supabase
-      .from('lab_whiteboards')
-      .select('*')
-      .eq('lab_id', labId)
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      console.error('Error loading whiteboard:', error);
-    } else if (data?.canvas_data) {
-      // canvas_data is already parsed by Supabase client
-      setElements(data.canvas_data as unknown as DrawElement[]);
-    }
-  };
-
-  const setupRealtime = () => {
     const channel = supabase.channel(`whiteboard:${labId}`)
       .on('broadcast', { event: 'draw' }, ({ payload }) => {
         setElements(payload.elements);
       })
       .subscribe();
+    channelRef.current = channel;
 
     return () => {
+      cancelled = true;
+      channelRef.current = null;
       supabase.removeChannel(channel);
     };
-  };
+  }, [labId]);
 
   const broadcastElements = (newElements: DrawElement[]) => {
-    supabase.channel(`whiteboard:${labId}`).send({
+    channelRef.current?.send({
       type: 'broadcast',
       event: 'draw',
       payload: { elements: newElements }
     });
   };
 
-  const redrawCanvas = () => {
+  const redrawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -136,7 +136,12 @@ const LabWhiteboard = ({ labId }: LabWhiteboardProps) => {
         ctx.stroke();
       }
     }
-  };
+  }, [elements, currentElement]);
+
+  // Repaint whenever committed elements or the in-progress stroke change.
+  useEffect(() => {
+    redrawCanvas();
+  }, [redrawCanvas]);
 
   const getMousePos = (e: React.MouseEvent<HTMLCanvasElement>): Point => {
     const canvas = canvasRef.current;
@@ -192,7 +197,6 @@ const LabWhiteboard = ({ labId }: LabWhiteboardProps) => {
         height: pos.y - startPoint.y
       });
     }
-    redrawCanvas();
   };
 
   const stopDrawing = () => {

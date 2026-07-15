@@ -26,6 +26,23 @@ const LabChat = ({ labId }: LabChatProps) => {
   const username = profile?.username || profile?.full_name || 'Researcher';
 
   useEffect(() => {
+    let cancelled = false;
+
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from('lab_messages')
+        .select('*')
+        .eq('lab_id', labId)
+        .order('created_at', { ascending: true })
+        .limit(100);
+
+      if (error) {
+        console.error('Error fetching messages:', error);
+      } else if (!cancelled) {
+        setMessages(data || []);
+      }
+    };
+
     fetchMessages();
 
     const channel = supabase
@@ -46,30 +63,16 @@ const LabChat = ({ labId }: LabChatProps) => {
       .subscribe();
 
     return () => {
+      cancelled = true;
       supabase.removeChannel(channel);
     };
   }, [labId]);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    // The Radix ScrollArea root doesn't scroll; its inner viewport does.
+    const viewport = scrollRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+    if (viewport) viewport.scrollTop = viewport.scrollHeight;
   }, [messages]);
-
-  const fetchMessages = async () => {
-    const { data, error } = await supabase
-      .from('lab_messages')
-      .select('*')
-      .eq('lab_id', labId)
-      .order('created_at', { ascending: true })
-      .limit(100);
-
-    if (error) {
-      console.error('Error fetching messages:', error);
-    } else {
-      setMessages(data || []);
-    }
-  };
 
   const sendMessage = async (event: React.FormEvent) => {
     event.preventDefault();

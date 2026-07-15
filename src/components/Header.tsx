@@ -24,7 +24,7 @@ const Header = ({ searchValue, onSearchChange }: HeaderProps) => {
     <header className="w-full retro-panel sticky top-0 z-40">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-3">
         <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="Resona home">
-          <img src="/favicon.ico" alt="Resona Logo" className="w-8 h-8" />
+          <img src={logo} alt="Resona Logo" className="w-8 h-8" />
           <span className="text-2xl font-display text-primary hidden sm:block">RESONA</span>
         </Link>
 

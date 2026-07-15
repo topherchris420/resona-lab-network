@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import ProjectCard from '@/components/ProjectCard';
 import FeedFilters from '@/components/FeedFilters';
@@ -21,6 +21,16 @@ const Home = () => {
   const [activeFilter, setActiveFilter] = useState<FeedFilter>('trending');
   const [query, setQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(8);
+
+  const handleFilterChange = (filter: FeedFilter) => {
+    setActiveFilter(filter);
+    setVisibleCount(8);
+  };
+
+  const handleQueryChange = (value: string) => {
+    setQuery(value);
+    setVisibleCount(8);
+  };
 
   useEffect(() => {
     if (authLoading) return;
@@ -103,7 +113,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background scanline-overlay">
       <AnimatedBackground />
-      <Header searchValue={query} onSearchChange={setQuery} />
+      <Header searchValue={query} onSearchChange={handleQueryChange} />
 
       <main className="container mx-auto px-4 py-8 space-y-8">
         <section className="retro-panel p-8 text-center">
@@ -112,7 +122,7 @@ const Home = () => {
           <p className="mt-2 text-sm md:text-base text-muted-foreground">PUBLISH EXPERIMENTS. COMMENT. FORK. BUILD IN PUBLIC.</p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
             <Button asChild className="retro-button">
-              <a href={user ? '/create' : '/auth'}>{user ? 'Publish A Project' : 'Join The Board'}</a>
+              <Link to={user ? '/create' : '/auth'}>{user ? 'Publish A Project' : 'Join The Board'}</Link>
             </Button>
             <Button asChild className="retro-button">
               <a href="#live-feed">Browse The Feed</a>
@@ -175,13 +185,13 @@ const Home = () => {
               </p>
             </div>
             <Button asChild className="retro-button">
-              <a href={user ? '/create' : '/auth'}>PUBLISH</a>
+              <Link to={user ? '/create' : '/auth'}>PUBLISH</Link>
             </Button>
           </div>
 
           <div className="mt-8 space-y-6">
             <div className="retro-panel p-4">
-              <FeedFilters activeFilter={activeFilter} onFilterChange={(filter) => setActiveFilter(filter as FeedFilter)} />
+              <FeedFilters activeFilter={activeFilter} onFilterChange={(filter) => handleFilterChange(filter as FeedFilter)} />
             </div>
 
             {loading ? (
@@ -199,7 +209,7 @@ const Home = () => {
                   {projects.length === 0 ? 'Be the first researcher on the board.' : 'Try a different search or filter.'}
                 </p>
                 <Button asChild className="retro-button mt-6">
-                  <a href={user ? '/create' : '/auth'}>{projects.length === 0 ? 'Publish First Project' : 'Publish Something New'}</a>
+                  <Link to={user ? '/create' : '/auth'}>{projects.length === 0 ? 'Publish First Project' : 'Publish Something New'}</Link>
                 </Button>
               </div>
             )}

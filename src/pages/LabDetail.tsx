@@ -27,7 +27,24 @@ const LabDetail = () => {
   useEffect(() => {
     if (!id) return;
 
+    let cancelled = false;
+
+    const fetchLab = async () => {
+      const { data, error } = await supabase.from('labs').select('*').eq('id', id).single();
+      if (cancelled) return;
+
+      if (error) {
+        console.error('Error fetching lab:', error);
+      } else {
+        setLab(data);
+      }
+      setLoading(false);
+    };
+
     fetchLab();
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   useEffect(() => {
@@ -57,17 +74,6 @@ const LabDetail = () => {
       supabase.removeChannel(channel);
     };
   }, [id, profile?.full_name, profile?.username, user]);
-
-  const fetchLab = async () => {
-    const { data, error } = await supabase.from('labs').select('*').eq('id', id).single();
-
-    if (error) {
-      console.error('Error fetching lab:', error);
-    } else {
-      setLab(data);
-    }
-    setLoading(false);
-  };
 
   if (loading) {
     return (

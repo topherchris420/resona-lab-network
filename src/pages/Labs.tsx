@@ -29,20 +29,26 @@ const Labs = () => {
   const { user } = useAuth();
 
   useEffect(() => {
+    let cancelled = false;
+
+    const fetchLabs = async () => {
+      const { data, error } = await supabase.from('labs').select('*').order('created_at', { ascending: false });
+      if (cancelled) return;
+
+      if (error) {
+        console.error('Error fetching labs:', error);
+        toast({ title: 'Could not load labs', variant: 'destructive' });
+      } else {
+        setLabs(data || []);
+      }
+      setLoading(false);
+    };
+
     fetchLabs();
-  }, []);
-
-  const fetchLabs = async () => {
-    const { data, error } = await supabase.from('labs').select('*').order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching labs:', error);
-      toast({ title: 'Could not load labs', variant: 'destructive' });
-    } else {
-      setLabs(data || []);
-    }
-    setLoading(false);
-  };
+    return () => {
+      cancelled = true;
+    };
+  }, [toast]);
 
   const createLab = async () => {
     if (!user) {

@@ -14,12 +14,9 @@ const Auth = () => {
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
 
-  const getNextPath = () => {
-    const next = searchParams.get('next');
-    // Only allow same-origin relative paths.
-    if (next && next.startsWith('/') && !next.startsWith('//')) return next;
-    return null;
-  };
+  const next = searchParams.get('next');
+  // Only allow same-origin relative paths.
+  const nextPath = next && next.startsWith('/') && !next.startsWith('//') ? next : null;
   const { user, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState('login');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,14 +28,9 @@ const Auth = () => {
 
   useEffect(() => {
     if (!authLoading && user) {
-      const next = getNextPath();
-      if (next) {
-        window.location.href = next;
-        return;
-      }
-      navigate(`/profile/${user.id}`);
+      navigate(nextPath ?? `/profile/${user.id}`, { replace: true });
     }
-  }, [authLoading, navigate, user]);
+  }, [authLoading, navigate, nextPath, user]);
 
   const resetPasswords = () => {
     setPassword('');
@@ -58,12 +50,7 @@ const Auth = () => {
     }
 
     toast({ title: 'Welcome back to Resona' });
-    const next = getNextPath();
-    if (next) {
-      window.location.href = next;
-      return;
-    }
-    navigate('/');
+    navigate(nextPath ?? '/');
   };
 
   const handleSignup = async (event: React.FormEvent) => {

@@ -26,7 +26,8 @@ var search_projects_default = defineTool({
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ query, tag, limit }) => {
     const supabase = publicSupabase();
-    let request = supabase.from("projects").select("id, title, abstract, tags, author_id, created_at").eq("visibility", "public").or(`title.ilike.%${query}%,abstract.ilike.%${query}%`).order("created_at", { ascending: false }).limit(limit ?? 10);
+    const keyword = query.replace(/[,()]/g, " ").replace(/[\\%_]/g, "\\$&").trim();
+    let request = supabase.from("projects").select("id, title, abstract, tags, author_id, created_at").eq("visibility", "public").or(`title.ilike.%${keyword}%,abstract.ilike.%${keyword}%`).order("created_at", { ascending: false }).limit(limit ?? 10);
     if (tag) request = request.contains("tags", [tag]);
     const { data, error } = await request;
     if (error) return { content: [{ type: "text", text: error.message }], isError: true };
