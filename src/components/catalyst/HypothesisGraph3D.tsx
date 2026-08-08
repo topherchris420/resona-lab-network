@@ -130,7 +130,7 @@ function Edges({ nodes, graph }: { nodes: Placed[]; graph: HypothesisGraph }) {
         const material = new THREE.LineBasicMaterial({ color: '#8b5cf6', transparent: true, opacity: 0.35 });
         return new THREE.Line(geometry, material);
       })
-      .filter((l): l is THREE.Line => l !== null);
+      .filter((l): l is THREE.Line<THREE.BufferGeometry, THREE.LineBasicMaterial> => l !== null);
   }, [nodes, graph]);
 
   return (
