@@ -413,6 +413,8 @@ Deno.serve(async (req) => {
       status,
     })
 
+  let failCtx: { admin: ReturnType<typeof createClient>; runId: string } | null = null
+
   try {
     const authHeader = req.headers.get('Authorization') ?? ''
     if (!authHeader.startsWith('Bearer ')) return json({ error: 'Unauthorized' }, 401)
@@ -439,6 +441,7 @@ Deno.serve(async (req) => {
     if (runError || !run) return json({ error: 'Run not found' }, 404)
     if (run.user_id !== userId) return json({ error: 'Forbidden' }, 403)
     if (run.status === 'complete') return json({ ok: true, runId, status: 'complete' })
+    failCtx = { admin, runId }
 
     let seq = 0
     let prevHash: string | null = null
@@ -572,6 +575,12 @@ Deno.serve(async (req) => {
     return json({ ok: true, runId, status: 'complete' })
   } catch (err) {
     console.error('catalyst-compile failed', err)
+    if (failCtx) {
+      await failCtx.admin
+        .from('catalyst_runs')
+        .update({ status: 'failed', error: err instanceof Error ? err.message : 'Unknown error' })
+        .eq('id', failCtx.runId)
+    }
     return json({ error: err instanceof Error ? err.message : 'Unknown error' }, 500)
   }
 })
