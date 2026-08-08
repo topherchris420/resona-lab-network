@@ -116,26 +116,32 @@ function GraphNode({
 }
 
 function Edges({ nodes, graph }: { nodes: Placed[]; graph: HypothesisGraph }) {
-  const positions = useMemo(() => new Map(nodes.map((n) => [n.id, n.position])), [nodes]);
-
-  return (
-    <>
-      {graph.edges.map((edge, i) => {
+  const lines = useMemo(() => {
+    const positions = new Map(nodes.map((n) => [n.id, n.position] as const));
+    return graph.edges
+      .map((edge) => {
         const from = positions.get(edge.source);
         const to = positions.get(edge.target);
         if (!from || !to) return null;
-        const points = [new THREE.Vector3(...from), new THREE.Vector3(...to)];
-        const geometry = new THREE.BufferGeometry().setFromPoints(points);
-        return (
-          // eslint-disable-next-line react/no-unknown-property
-          <line key={i} geometry={geometry}>
-            <lineBasicMaterial color="#8b5cf6" transparent opacity={0.35} />
-          </line>
-        );
-      })}
+        const geometry = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(...from),
+          new THREE.Vector3(...to),
+        ]);
+        const material = new THREE.LineBasicMaterial({ color: '#8b5cf6', transparent: true, opacity: 0.35 });
+        return new THREE.Line(geometry, material);
+      })
+      .filter((l): l is THREE.Line => l !== null);
+  }, [nodes, graph]);
+
+  return (
+    <>
+      {lines.map((line, i) => (
+        <primitive key={i} object={line} />
+      ))}
     </>
   );
 }
+
 
 export default function HypothesisGraph3D({ graph }: { graph: HypothesisGraph }) {
   const [activeId, setActiveId] = useState<string | null>(null);
