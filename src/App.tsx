@@ -10,7 +10,10 @@ import Auth from "./pages/Auth";
 import Create from "./pages/Create";
 import Labs from "./pages/Labs";
 import LabDetail from "./pages/LabDetail";
+import Catalyst from "./pages/Catalyst";
+import CatalystRun from "./pages/CatalystRun";
 import OAuthConsent from "./pages/OAuthConsent";
+
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./hooks/use-auth";
 
@@ -31,6 +34,9 @@ const App = () => (
             <Route path="/create" element={<Create />} />
             <Route path="/labs" element={<Labs />} />
             <Route path="/labs/:id" element={<LabDetail />} />
+            <Route path="/catalyst" element={<Catalyst />} />
+            <Route path="/catalyst/:id" element={<CatalystRun />} />
+
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

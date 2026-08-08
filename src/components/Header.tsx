@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, Plus, Bell, User, FlaskConical } from 'lucide-react';
+import { Search, Plus, Bell, User, FlaskConical, Atom } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Link } from 'react-router-dom';
@@ -44,6 +44,13 @@ const Header = ({ searchValue, onSearchChange }: HeaderProps) => {
             <Link to="/labs" aria-label="Labs">
               <FlaskConical className="h-4 w-4" />
               <span className="hidden sm:inline">LABS</span>
+            </Link>
+          </Button>
+
+          <Button asChild variant="ghost" className="retro-button">
+            <Link to="/catalyst" aria-label="Catalyst research compiler">
+              <Atom className="h-4 w-4" />
+              <span className="hidden md:inline">CATALYST</span>
             </Link>
           </Button>
 

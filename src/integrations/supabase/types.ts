@@ -14,6 +14,131 @@ export type Database = {
   }
   public: {
     Tables: {
+      catalyst_events: {
+        Row: {
+          created_at: string
+          hash: string
+          id: string
+          payload: Json
+          prev_hash: string | null
+          run_id: string
+          seq: number
+          stage: string
+        }
+        Insert: {
+          created_at?: string
+          hash: string
+          id?: string
+          payload?: Json
+          prev_hash?: string | null
+          run_id: string
+          seq?: number
+          stage: string
+        }
+        Update: {
+          created_at?: string
+          hash?: string
+          id?: string
+          payload?: Json
+          prev_hash?: string | null
+          run_id?: string
+          seq?: number
+          stage?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalyst_events_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "catalyst_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      catalyst_runs: {
+        Row: {
+          architecture: Json | null
+          created_at: string
+          domain: string
+          error: string | null
+          experiment: Json | null
+          hypothesis_graph: Json | null
+          id: string
+          idea: string
+          implementation: Json | null
+          mermaid: string | null
+          mode: string
+          project_id: string | null
+          seed: number
+          spec: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+          validation: Json | null
+          verification: Json | null
+          visibility: string
+        }
+        Insert: {
+          architecture?: Json | null
+          created_at?: string
+          domain?: string
+          error?: string | null
+          experiment?: Json | null
+          hypothesis_graph?: Json | null
+          id?: string
+          idea: string
+          implementation?: Json | null
+          mermaid?: string | null
+          mode?: string
+          project_id?: string | null
+          seed?: number
+          spec?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          validation?: Json | null
+          verification?: Json | null
+          visibility?: string
+        }
+        Update: {
+          architecture?: Json | null
+          created_at?: string
+          domain?: string
+          error?: string | null
+          experiment?: Json | null
+          hypothesis_graph?: Json | null
+          id?: string
+          idea?: string
+          implementation?: Json | null
+          mermaid?: string | null
+          mode?: string
+          project_id?: string | null
+          seed?: number
+          spec?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          validation?: Json | null
+          verification?: Json | null
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "catalyst_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "catalyst_runs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       follows: {
         Row: {
           created_at: string
