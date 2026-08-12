@@ -167,9 +167,15 @@ const CatalystRunPage = ({ shared = false }: { shared?: boolean }) => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <Link to="/catalyst" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary">
-          <ArrowLeft className="h-3 w-3" /> ALL RUNS
-        </Link>
+        {shared ? (
+          <Link to="/catalyst" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary">
+            <ArrowLeft className="h-3 w-3" /> EXPLORE CATALYST
+          </Link>
+        ) : (
+          <Link to="/catalyst" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary">
+            <ArrowLeft className="h-3 w-3" /> ALL RUNS
+          </Link>
+        )}
 
         <header className="retro-panel mt-4 p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -180,6 +186,7 @@ const CatalystRunPage = ({ shared = false }: { shared?: boolean }) => {
                 <Badge variant="outline">{run.domain.replace(/_/g, ' ')}</Badge>
                 <Badge variant="outline">seed {run.seed}</Badge>
                 <Badge variant="outline">{run.mode === 'ai' ? 'AI backend' : 'local engine'}</Badge>
+                {shared ? <Badge variant="outline">read-only share</Badge> : null}
                 {run.spec ? (
                   <span className={`text-xs uppercase tracking-[0.16em] ${STATUS_COLOR[run.spec.scientific_status]}`}>
                     {run.spec.scientific_status}
@@ -198,11 +205,17 @@ const CatalystRunPage = ({ shared = false }: { shared?: boolean }) => {
                   <span className="text-foreground">{run.verification.score}/100</span>
                 </div>
               ) : null}
+              {!shared && run.status === 'complete' ? (
+                <Button onClick={share} disabled={sharing} variant="ghost" className="retro-button">
+                  {copied ? <Check className="mr-2 h-4 w-4 text-emerald-400" /> : <Link2 className="mr-2 h-4 w-4" />}
+                  {copied ? 'LINK COPIED' : 'COPY SHARE LINK'}
+                </Button>
+              ) : null}
               {run.project_id ? (
                 <Button asChild variant="ghost" className="retro-button">
                   <Link to={`/project/${run.project_id}`}>VIEW PROJECT</Link>
                 </Button>
-              ) : user?.id === run.user_id && run.status === 'complete' ? (
+              ) : !shared && isOwner && run.status === 'complete' ? (
                 <Button onClick={publish} disabled={publishing} className="retro-button">
                   {publishing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Rocket className="mr-2 h-4 w-4" />}
                   PUBLISH TO FEED
@@ -210,6 +223,7 @@ const CatalystRunPage = ({ shared = false }: { shared?: boolean }) => {
               ) : null}
             </div>
           </div>
+
           {run.status === 'failed' ? (
             <p className="mt-4 text-sm text-destructive">Compile failed: {run.error}</p>
           ) : null}
