@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
+  Check,
   FileCode2,
   FlaskConical,
   Hash,
+  Link2,
   Loader2,
   Rocket,
   ShieldAlert,
@@ -21,7 +23,9 @@ import {
   fetchCatalystEvents,
   fetchCatalystRun,
   linkRunToProject,
+  runShareUrl,
   runToProjectContent,
+  setRunVisibility,
   type CatalystEvent,
   type CatalystRun,
 } from '@/lib/catalyst';
@@ -31,6 +35,7 @@ const STATUS_COLOR: Record<string, string> = {
   experimental: 'text-cyan-400',
   speculative: 'text-amber-400',
 };
+
 
 const Section = ({ title, icon, children }: { title: string; icon?: React.ReactNode; children: React.ReactNode }) => (
   <section className="retro-panel mt-6 p-5">
