@@ -58,13 +58,39 @@ const List = ({ items }: { items?: string[] }) =>
     <p className="text-muted-foreground/70">None recorded.</p>
   );
 
-const CatalystRunPage = () => {
+const CatalystRunPage = ({ shared = false }: { shared?: boolean }) => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [run, setRun] = useState<CatalystRun | null>(null);
   const [events, setEvents] = useState<CatalystEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const share = async () => {
+    if (!run) return;
+    setSharing(true);
+    try {
+      if (isOwner && run.visibility !== 'public') {
+        await setRunVisibility(run.id, 'public');
+        setRun({ ...run, visibility: 'public' });
+      }
+      await navigator.clipboard.writeText(runShareUrl(run.id));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast({ title: 'Share link copied', description: 'Anyone with this link can view this run read-only.' });
+    } catch (error) {
+      toast({
+        title: 'Could not create share link',
+        description: error instanceof Error ? error.message : 'Try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setSharing(false);
+    }
+  };
+
 
   useEffect(() => {
     if (!id) return;
