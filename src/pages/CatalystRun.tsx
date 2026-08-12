@@ -67,6 +67,7 @@ const CatalystRunPage = ({ shared = false }: { shared?: boolean }) => {
   const [publishing, setPublishing] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [copied, setCopied] = useState(false);
+  const isOwner = !!user && !!run && user.id === run.user_id;
 
   const share = async () => {
     if (!run) return;
