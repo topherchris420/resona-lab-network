@@ -12,6 +12,7 @@ import Labs from "./pages/Labs";
 import LabDetail from "./pages/LabDetail";
 import Catalyst from "./pages/Catalyst";
 import CatalystRun from "./pages/CatalystRun";
+import CatalystShare from "./pages/CatalystShare";
 import OAuthConsent from "./pages/OAuthConsent";
 
 import NotFound from "./pages/NotFound";
