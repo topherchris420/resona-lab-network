@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import {
   ArrowLeft,
+  Check,
   FileCode2,
   FlaskConical,
   Hash,
+  Link2,
   Loader2,
   Rocket,
   ShieldAlert,
@@ -21,7 +23,9 @@ import {
   fetchCatalystEvents,
   fetchCatalystRun,
   linkRunToProject,
+  runShareUrl,
   runToProjectContent,
+  setRunVisibility,
   type CatalystEvent,
   type CatalystRun,
 } from '@/lib/catalyst';
@@ -31,6 +35,7 @@ const STATUS_COLOR: Record<string, string> = {
   experimental: 'text-cyan-400',
   speculative: 'text-amber-400',
 };
+
 
 const Section = ({ title, icon, children }: { title: string; icon?: React.ReactNode; children: React.ReactNode }) => (
   <section className="retro-panel mt-6 p-5">
@@ -53,13 +58,40 @@ const List = ({ items }: { items?: string[] }) =>
     <p className="text-muted-foreground/70">None recorded.</p>
   );
 
-const CatalystRunPage = () => {
+const CatalystRunPage = ({ shared = false }: { shared?: boolean }) => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [run, setRun] = useState<CatalystRun | null>(null);
   const [events, setEvents] = useState<CatalystEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const isOwner = !!user && !!run && user.id === run.user_id;
+
+  const share = async () => {
+    if (!run) return;
+    setSharing(true);
+    try {
+      if (isOwner && run.visibility !== 'public') {
+        await setRunVisibility(run.id, 'public');
+        setRun({ ...run, visibility: 'public' });
+      }
+      await navigator.clipboard.writeText(runShareUrl(run.id));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+      toast({ title: 'Share link copied', description: 'Anyone with this link can view this run read-only.' });
+    } catch (error) {
+      toast({
+        title: 'Could not create share link',
+        description: error instanceof Error ? error.message : 'Try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setSharing(false);
+    }
+  };
+
 
   useEffect(() => {
     if (!id) return;
@@ -135,9 +167,15 @@ const CatalystRunPage = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <Link to="/catalyst" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary">
-          <ArrowLeft className="h-3 w-3" /> ALL RUNS
-        </Link>
+        {shared ? (
+          <Link to="/catalyst" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary">
+            <ArrowLeft className="h-3 w-3" /> EXPLORE CATALYST
+          </Link>
+        ) : (
+          <Link to="/catalyst" className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary">
+            <ArrowLeft className="h-3 w-3" /> ALL RUNS
+          </Link>
+        )}
 
         <header className="retro-panel mt-4 p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -148,6 +186,7 @@ const CatalystRunPage = () => {
                 <Badge variant="outline">{run.domain.replace(/_/g, ' ')}</Badge>
                 <Badge variant="outline">seed {run.seed}</Badge>
                 <Badge variant="outline">{run.mode === 'ai' ? 'AI backend' : 'local engine'}</Badge>
+                {shared ? <Badge variant="outline">read-only share</Badge> : null}
                 {run.spec ? (
                   <span className={`text-xs uppercase tracking-[0.16em] ${STATUS_COLOR[run.spec.scientific_status]}`}>
                     {run.spec.scientific_status}
@@ -166,11 +205,17 @@ const CatalystRunPage = () => {
                   <span className="text-foreground">{run.verification.score}/100</span>
                 </div>
               ) : null}
+              {!shared && run.status === 'complete' ? (
+                <Button onClick={share} disabled={sharing} variant="ghost" className="retro-button">
+                  {copied ? <Check className="mr-2 h-4 w-4 text-emerald-400" /> : <Link2 className="mr-2 h-4 w-4" />}
+                  {copied ? 'LINK COPIED' : 'COPY SHARE LINK'}
+                </Button>
+              ) : null}
               {run.project_id ? (
                 <Button asChild variant="ghost" className="retro-button">
                   <Link to={`/project/${run.project_id}`}>VIEW PROJECT</Link>
                 </Button>
-              ) : user?.id === run.user_id && run.status === 'complete' ? (
+              ) : !shared && isOwner && run.status === 'complete' ? (
                 <Button onClick={publish} disabled={publishing} className="retro-button">
                   {publishing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Rocket className="mr-2 h-4 w-4" />}
                   PUBLISH TO FEED
@@ -178,6 +223,7 @@ const CatalystRunPage = () => {
               ) : null}
             </div>
           </div>
+
           {run.status === 'failed' ? (
             <p className="mt-4 text-sm text-destructive">Compile failed: {run.error}</p>
           ) : null}

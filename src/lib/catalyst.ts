@@ -189,6 +189,14 @@ export const linkRunToProject = async (runId: string, projectId: string) => {
   if (error) throw error;
 };
 
+/** Marks a run public so its share link resolves for anonymous visitors. */
+export const setRunVisibility = async (runId: string, visibility: 'public' | 'private') => {
+  const { error } = await db.from('catalyst_runs').update({ visibility }).eq('id', runId);
+  if (error) throw error;
+};
+
+export const runShareUrl = (runId: string) => `${window.location.origin}/catalyst/share/${runId}`;
+
 /** Renders a completed run as publishable Resona project markdown. */
 export const runToProjectContent = (run: CatalystRun): string => {
   const spec = run.spec;
